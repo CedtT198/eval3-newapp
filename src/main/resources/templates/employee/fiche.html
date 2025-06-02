@@ -1,0 +1,98 @@
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Employees / </span>List</h4>
+
+<div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="nav-align-top mb-4">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-tabs-info" aria-controls="navs-tabs-info" aria-selected="true">
+                            Overview
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-tabs-salary" aria-controls="navs-tabs-salary" aria-selected="false">
+                            Salary history
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="navs-tabs-info" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-12 row" style="margin-bottom: 25px;">
+                                <div class="col-md-4">
+                                    <p>First Name</p>
+                                    <input type="text" class="form-control" id="firstname" name="firstname" th:value="${employee.first_name}" disabled>
+                                    <p>Middle Name</p>
+                                    <input type="text" class="form-control" id="middlename" name="middlename" th:value="${employee.middle_name}" disabled>
+                                    <p>Last Name</p>
+                                    <input type="text" class="form-control" id="lastname" name="lastname" th:value="${employee.last_name}" disabled>
+                                    <p>Full Name</p>
+                                    <input type="text" class="form-control" id="fullname" name="fullname" th:value="${employee.employee_name}" disabled>
+                                </div>
+                                <div class="col-md-4">
+                                    <p>Gender</p>
+                                    <input type="text" class="form-control" id="gender" name="gender" th:value="${employee.gender}" disabled>
+                                    <p>Date of Birth</p>
+                                    <input type="date" class="form-control" id="dateofbirth" name="dateofbirth" th:value="${employee.date_of_birth}" disabled>
+                                    <p>Salutation</p>
+                                    <input type="text" class="form-control" id="salutation" name="salutation" th:value="${employee.salutation}" disabled>
+                                </div>
+                                <div class="col-md-4">
+                                    <p>Date of Joining</p>
+                                    <input type="date" class="form-control" id="dateofjoining" name="dateofjoining" th:value="${employee.date_of_joining}" disabled>
+                                    <p>Status</p>
+                                    <input type="text" class="form-control" id="status" name="status" th:value="${employee.status}" disabled>
+                                </div>
+                            </div><hr>
+                            <div class="col-md-12 row">
+                                <h4 class="card-header">Company details</h4>
+                                <div class="col-md-4">
+                                    <p>Company</p>
+                                    <input type="text" class="form-control" id="company" name="company" th:value="${employee.company}" disabled>
+                                    <p>Department</p>
+                                    <input type="text" class="form-control" id="department" name="department" th:value="${employee.department}" disabled>
+                                    <p>Employment Type</p>
+                                    <input type="text" class="form-control" id="employmenttype" name="employmenttype" th:value="${employee.employment_type}" disabled>
+                                </div>
+                                <div class="col-md-4">
+                                    <p>Designation</p>
+                                    <input type="text" class="form-control" id="designation" name="designation" th:value="${employee.designation}" disabled>
+                                    <p>Reports to</p>
+                                    <input type="text" class="form-control" id="reportsto" name="reportsto" th:value="${employee.reports_to}" disabled>
+                                </div>
+                                <div class="col-md-4">
+                                    <p>Branch</p>
+                                    <input type="text" class="form-control" id="branch" name="branch" th:value="${employee.branch}" disabled>
+                                    <p>Grade</p>
+                                    <input type="text" class="form-control" id="grade" name="grade" th:value="${employee.grade}" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="navs-tabs-salary" role="tabpanel">
+                        <!-- <h4 class="card-header"></h4> -->
+                        <div class="table-responsive text-nowrap">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Salary Structure</th>
+                                        <th>Date</th>
+                                        <th>Base Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-border-bottom-0">
+                                    <tr th:each="sal : ${salaries}">
+                                        <td th:text="${sal.salary_structure}"></td>
+                                        <td th:text="${sal.from_date}"></td>
+                                        <td th:text="${sal.base + ' ' + sal.currency}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

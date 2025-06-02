@@ -1,0 +1,121 @@
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Purchase Invoice / </span>List</h4>
+
+<div th:if="${success != null}" class="alert alert-info alert-dismissible" role="alert">
+  <small th:text="${success}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div th:if="${error != null}" class="alert alert-danger alert-dismissible" role="alert">
+  <small th:text="${error}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<small class="text-light fw-semibold">Filtrer by : </small>
+<div class="mt-3">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#status_filter">Status</button> 
+    <div class="modal fade" id="status_filter" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalCenterTitle">Filter</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          <form th:action="@{/purchase_invoice/filter}" method="get">
+            <div class="modal-body">
+              <div class="row">
+                <!-- <div class="col mb-3">
+                  <label for="nameWithTitle" class="form-label">Choose a supplier</label>
+                  <select class="form-control" name="supplierName" required>
+                    <option value="All">All</option>
+                    <option th:each="supplier : ${suppliers}" th:value="${supplier.name}">
+                      <p th:text="${supplier.name}"></p>
+                    </option>
+                  </select>
+                </div> -->
+                <div class="col mb-3">
+                  <label for="nameWithTitle" class="form-label">Choose a status</label>
+                  <select class="form-control" name="status" required>
+                    <option value="All">All</option>
+                    <option value="Draft">Draft</option>
+                    <option value="Return">Return</option>
+                    <option value="Debit Note Issued">Debit Note Issued</option>
+                    <option value="Submitted">Submitted</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Partly Paid">Partly Paid</option>
+                    <option value="Unpaid">Unpaid</option>
+                    <option value="Overdue">Overdue</option>
+                    <option value="Cancelled">Cancelled</option>
+                    <option value="Internal Transfer">Internal Transfer</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Confirm</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+<br><br>
+
+<div class="card">
+  <h4 class="card-header">Purchase Invoices</h4>
+  <h6 class="card-header">Filter by <span th:text="${filter_name}"></span></h6>
+  <div class="table-responsive text-nowrap">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Grand Total</th>
+          <th>ID</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        <tr th:each="invoice : ${invoices}">
+            <td th:text="${invoice.title}"></td>
+            <td>
+                <span class="badge rounded-pill bg-info" th:text="${invoice.status}" th:if="${invoice.status == 'Submitted'}"></span>
+                <span class="badge rounded-pill bg-warning" th:text="${invoice.status}" th:if="${invoice.status == 'Draft'}"></span>
+                <span class="badge rounded-pill bg-warning" th:text="${invoice.status}" th:if="${invoice.status == 'Internal Transfer'}"></span>
+                <span class="badge rounded-pill bg-warning" th:text="${invoice.status}" th:if="${invoice.status == 'Unpaid'}"></span>
+                <span class="badge rounded-pill bg-warning" th:text="${invoice.status}" th:if="${invoice.status == 'Partly Paid'}"></span>
+                <span class="badge rounded-pill bg-success" th:text="${invoice.status}" th:if="${invoice.status == 'Debit Note Issued'}"></span>
+                <span class="badge rounded-pill bg-success" th:text="${invoice.status}" th:if="${invoice.status == 'Paid'}"></span>
+                <span class="badge rounded-pill bg-success" th:text="${invoice.status}" th:if="${invoice.status == 'Overdue'}"></span>
+                <span class="badge rounded-pill bg-danger" th:text="${invoice.status}" th:if="${invoice.status == 'Cancelled'}"></span>
+                <span class="badge rounded-pill bg-danger" th:text="${invoice.status}" th:if="${invoice.status == 'Return'}"></span>
+            </td>
+            <td th:text="${invoice.posting_date}"></td>
+            <td th:text="${invoice.grand_total}"></td>
+            <td th:text="${invoice.name}"></td>
+            <td>
+              <div th:if="${invoice.status == 'Draft'}">
+                <form th:action="@{/purchase_invoice/update_submission}" method="get">
+                  <input type="hidden" name="name" th:value="${invoice.name}">
+                  <button class="btn btn-primary" type="submit">Submit</button>
+                </form>
+              </div>
+              <div th:if="${invoice.status == 'Unpaid'}">
+                <form th:action="@{/payment/details}" method="get">
+                  <input type="hidden" name="name" th:value="${invoice.name}">
+                  <input type="hidden" name="posting_date" th:value="${invoice.posting_date}">
+                  <input type="hidden" name="supplier_name" th:value="${invoice.supplier_name}">
+                  <input type="hidden" name="grand_total" th:value="${invoice.grand_total}">
+                  <input type="hidden" name="status" value="Not Saved">
+                  <button class="btn btn-info" type="submit">Payement</button>
+                </form>
+              </div>
+            </td>
+            <td th:else></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

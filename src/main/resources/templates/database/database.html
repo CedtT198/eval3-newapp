@@ -1,0 +1,50 @@
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Database management</span></h4>
+
+<div class="card" style="margin-top: 25px;">
+    <div class="row container">
+        <div class="col-md-6">
+            <h4 class="card-header">Import</h4>
+            <div>
+                <form class="offset-md-1" method="post" th:action="@{/database_management/importCSV}" enctype="multipart/form-data" style="padding-bottom: 25px;">
+                    <div class="input-group mb-3">
+                        <label for="file1">File 1
+                            <input type="file" id="file1" name="file1" class="form-control">
+                        </label>
+                    </div>
+                    <div class="input-group mb-3">
+                        <label for="file2">File 2
+                            <input type="file" id="file2" name="file2" class="form-control">
+                        </label>
+                    </div>
+                    <div class="input-group mb-3">
+                        <label for="file3">File 3
+                            <input type="file" id="file3" name="file3" class="form-control">
+                        </label>
+                    </div>
+                    <button class="btn btn-primary offset-md-8" id="import_csv">Import files</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6" style="border-left: 1px solid rgb(201, 201, 201)">
+            <h4 class="card-header">Reset data</h4>
+            <div class="container">
+                <p>This action will delete all the data in the database.</p>
+                <a th:href="@{/database_management/resetDb}">
+                    <button class="btn btn-primary" id="reset-db-btn">
+                        Reset data in database
+                    </button>
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${success != null}" class="alert alert-success alert-dismissible" role="alert">
+            <small th:text="${success}"></small>  
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div th:if="${error != null}" class="alert alert-danger alert-dismissible" role="alert">
+            <small th:text="${error}"></small>  
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+</div>

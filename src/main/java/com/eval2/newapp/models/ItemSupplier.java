@@ -1,0 +1,62 @@
+package com.eval2.newapp.models;
+
+public class ItemSupplier {
+    String name;
+    String creation;
+    String modified;
+    String modified_by;
+    String owner;
+    String docstatus;
+    String idx;
+    String item_code;
+    String supplier_part_no;
+    String item_name;
+    String lead_time_days;
+    String expected_delivery_date;
+    String is_free_item;
+    String description;
+    String item_group;
+    String brand;
+    String image;
+    String qty;
+    String stock_uom;
+    String uom;
+    String conversion_factor;
+    String stock_qty;
+    String price_list_rate;
+    String discount_percentage;
+    String discount_amount;
+    String distributed_discount_amount;
+    String base_price_list_rate;
+    String rate;
+    String amount;
+    String item_tax_template;
+    String base_rate;
+    String base_amount;
+    String pricing_rules;
+    String net_rate;
+    String net_amount;
+    String base_net_rate;
+    String base_net_amount;
+    String weight_per_unit;
+    String total_weight;
+    String weight_uom;
+    String warehouse;
+    String prevdoc_doctype;
+    String material_request;
+    String sales_order;
+    String request_for_quotation;
+    String material_request_item;
+    String request_for_quotation_item;
+    String item_tax_rate;
+    String manufacturer;
+    String manufacturer_part_no;
+    String cost_center;
+    String project;
+    String page_break;
+    String parent;
+    String parentfield;
+    String parenttype;
+    
+    public ItemSupplier() {}
+}

@@ -1,0 +1,161 @@
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Supplier Quotation / <span th:text="${name}"></span> / Item / </span>List</h4>
+
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-md-12 row">
+        <div class="col-md-6">
+          <h5>
+            <span th:text="${title}"></span>
+            <span class="badge rounded-pill bg-info" th:text="${status}" th:if="${status == 'Submitted'}"></span>
+            <span class="badge rounded-pill bg-warning" th:text="${status}" th:if="${status == 'Draft'}"></span>
+            <span class="badge rounded-pill bg-danger" th:text="${status}" th:if="${status == 'Cancelled'}"></span>
+          </h5>
+        </div>
+        <div class="col-md-6">
+          <div th:if="${status == 'Draft'}" style="text-align:right">
+            <form th:action="@{/item/update_status}" method="post">
+              <input type="hidden" name="title" th:value="${title}">
+              <input type="hidden" name="name" th:value="${name}">
+              <input type="hidden" name="docstatus" value="1">
+              <input type="hidden" name="status" value="Submitted">
+              <input type="hidden" name="default_status" th:value="${status}">
+              <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+          </div>
+          <!-- <div th:if="${status == 'Submitted'}" style="text-align:right; display:inline">
+            <form th:action="@{/item/update_status}" method="post">
+              <input type="hidden" name="title" th:value="${title}">
+              <input type="hidden" name="name" th:value="${name}">
+              <input type="hidden" name="docstatus" value="2">
+              <input type="hidden" name="status" value="Cancelled">
+              <input type="hidden" name="default_status" th:value="${status}">
+              <button class="btn btn-primary" type="submit">Cancel permanantly</button>
+            </form>          
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div><br><br>
+
+<div th:if="${success != null}" class="alert alert-success alert-dismissible" role="alert">
+  <small th:text="${success}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div th:if="${error != null}" class="alert alert-danger alert-dismissible" role="alert">
+  <small th:text="${error}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div class="card">
+  <h4 class="card-header">Details</h4>
+  <div class="row container">
+    <div class="col-md-6 row">
+      <div class="col-md-5">Supplier</div>
+      <div class="col-md-7">
+          <input type="text" class="form-control" th:value="${name}" readonly/>
+      </div>
+    </div>
+    <div class="col-md-6 row">
+      <div class="col-md-5">Status</div>
+      <div class="col-md-7">
+          <input type="text" class="form-control" th:value="${status}" readonly/><br>
+      </div>
+    </div>
+  </div>
+</div><br>
+
+<div class="card">
+  <h5 class="card-header">Supplier Quotation Items</h5>
+  <div class="table-responsive text-nowrap">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Item Code</th>
+          <th>Quantity</th>
+          <th>UOM</th>
+          <th>Rate</th>
+          <th>Amount</th>
+          <th>Warehouse</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        <tr th:each="item : ${items}">
+            <td th:text="${item.item_code}"></td>
+            <td th:text="${item.qty}"></span></td>
+            <td th:text="${item.uom}"></span></td>
+            <td th:text="${item.rate}"></span></td>
+            <td th:text="${item.amount}"></td>
+            <td th:text="${item.warehouse}"></td>
+            <td th:if="${status == 'Draft'}">
+              <button type="button" class="btn btn-warning" data-bs-toggle="modal" th:data-bs-target="'#update_filter_'+${item.item_code}">Update</button> 
+              <div class="modal fade"  th:id="'update_filter_' + ${item.item_code}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="modalCenterTitle">
+                        Update <span th:text="${name}"></span>/<span th:text="${item.item_code}"></span> price
+                      </h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    
+                    <form th:action="@{/item/update_price}" method="post">
+                      <input type="hidden" name="item_code" th:value="${item.item_code}" required/>
+                      <input type="hidden" name="name" th:value="${name}" required/>
+                      <input type="hidden" name="status" th:value="${status}" required/>
+                      <input type="hidden" name="title" th:value="${title}" required/>
+                      <div class="modal-body">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <label for="rate" class="form-label">New rate</label>
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                              <div class="input-group input-group-merge">
+                                <input type="number" class="form-control" name="rate" id="rate" th:value="${item.rate}" required/>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-12">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                              <div class="input-group input-group-merge">
+                                <input type="number" class="form-control" name="quantity" id="quantity" th:value="${item.qty}" readonly required/>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Confirm changes</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div><br><br>
+
+<div class="card">
+  <h4 class="card-header">Total</h4>
+  <div class="row container">
+    <div class="col-md-6 row">
+      <div class="col-md-5">Total Quantity</div>
+      <div class="col-md-7">
+          <input type="text" class="form-control" th:value="${sumQty}" readonly/>
+      </div>
+    </div>
+    <div class="col-md-6 row">
+      <div class="col-md-5">Total Amount</div>
+      <div class="col-md-7">
+          <input type="text" class="form-control" th:value="${sumAmount}" readonly/><br>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Request for Quotation / </span>List</h4>
+
+<div th:if="${success != null}" class="alert alert-info alert-dismissible" role="alert">
+  <small th:text="${success}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div class="card">
+  <h5 class="card-header">Request for Quotations</h5>
+  <div class="table-responsive text-nowrap">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Series</th>
+          <th>Company</th>
+          <th>Date</th>
+          <th>Message for supplier</th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        <tr th:each="r : ${rfq}">
+            <td th:text="${r.name}"></td>
+            <td><span class="badge rounded-pill bg-info" th:text="${r.status}"></span></td>
+            <td><span class="badge rounded-pill bg-secondary" th:text="${r.naming_series}"></span></td>
+            <td th:text="${r.company}"></td>
+            <td th:text="${r.transaction_date}"></td>
+            <td th:text="${r.message_for_supplier}"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

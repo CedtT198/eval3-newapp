@@ -1,0 +1,84 @@
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Supplier Quotation / </span>List</h4>
+
+<div th:if="${success != null}" class="alert alert-info alert-dismissible" role="alert">
+  <small th:text="${success}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<small class="text-light fw-semibold">Filtrer by : </small>
+<div class="mt-3">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#supplier_filter">Supplier</button> 
+    <div class="modal fade" id="supplier_filter" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalCenterTitle">Filter</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          <form th:action="@{/supplier_quotation/filterbysupplier}" method="get">
+            <div class="modal-body">
+              <div class="row">
+                <div class="col mb-3">
+                  <label for="nameWithTitle" class="form-label">Choose a supplier</label>
+                  <select class="form-control" name="supplierName" required>
+                    <option th:each="supplier : ${suppliers}" th:value="${supplier.name}">
+                      <p th:text="${supplier.name}"></p>
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Confirm</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+<br><br>
+
+<div class="card">
+  <h4 class="card-header">Supplier Quotations</h4>
+  <h6 class="card-header">Filter by <span th:text="${filter_name}"></span></h6>
+  <div class="table-responsive text-nowrap">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Valid Till</th>
+          <th>Grand Total</th>
+          <th>ID</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        <tr th:each="sp : ${supplierquotations}">
+            <td th:text="${sp.title}"></td>
+            <td>
+              <span class="badge rounded-pill bg-info" th:text="${sp.status}" th:if="${sp.status == 'Submitted'}"></span>
+              <span class="badge rounded-pill bg-warning" th:text="${sp.status}" th:if="${sp.status == 'Draft'}"></span>
+              <span class="badge rounded-pill bg-danger" th:text="${sp.status}" th:if="${sp.status == 'Cancelled'}"></span>
+            </td>
+            <td th:text="${sp.transaction_date}"></td>
+            <td th:text="${sp.valid_till}"></td>
+            <td th:text="${sp.net_total}"></td>
+            <td th:text="${sp.name}"></td>
+            <td>
+                <form th:action="@{/item/find_all}" method="get">
+                  <input type="hidden" name="name" th:value="${sp.name}">
+                  <input type="hidden" name="title" th:value="${sp.title}">
+                  <input type="hidden" name="status" th:value="${sp.status}">
+                  <button class="btn btn-secondary" type="submit">Details</button>
+                </form>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

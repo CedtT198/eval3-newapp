@@ -1,0 +1,103 @@
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Salary </span>/ Slip / List</h4>
+
+<div th:if="${error != null}" class="alert alert-danger alert-dismissible" role="alert">
+  <small th:text="${error}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<!-- <div th:if="${success != null}" class="alert alert-success alert-dismissible" role="alert">
+  <small th:text="${success}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div> -->
+
+<div>
+    <div class="table-responsive text-nowrap">
+        <div id="accordionIcon" class="accordion mt-3 accordion-without-arrow">
+            <div class="accordion-item card">
+                <h2 class="accordion-header" id="heading">
+                    <div class="accordion-button collapsed row">
+                        <div class="col-md-3">Employee Name</div>
+                        <div class="col-md-3">Posting Date</div>
+                        <div class="col-md-3">Net Salary</div>
+                        <div class="col-md-3">Action</div>
+                    </div>
+                </h2>
+            </div>
+
+            <div class="accordion-item card" th:each="sal, iterStat : ${salaries}">
+                <h2 class="accordion-header" th:id="'heading-' + ${iterStat.index}">
+                    <div type="button" class="accordion-button collapsed" data-bs-toggle="collapse" th:data-bs-target="'#accordionIcon-' + ${iterStat.index}" th:aria-controls="'accordionIcon-' + ${iterStat.index}">
+                        <div class="col-md-3" th:text="${sal.employee_name}"></div>
+                        <div class="col-md-3" th:text="${sal.posting_date}"></div>
+                        <div class="col-md-3" th:text="${sal.net_pay}"></div>
+                        <div class="col-md-3">
+                            <form th:action="@{/salary/exportPDF}" method="get">
+                                <input type="hidden" name="salRef" th:value="${sal.name}">
+                                <button class="btn btn-secondary" type="submit">Export to PDF</button>
+                            </form>
+                        </div>
+                    </div>
+                </h2>
+
+                <div th:id="'accordionIcon-' + ${iterStat.index}" class="accordion-collapse collapse" data-bs-parent="#accordionIcon" th:aria-labelledby="'heading-' + ${iterStat.index}">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-md-12 row" style="margin-bottom: 25px;">
+                                <div class="col-md-4">
+                                    <p>Employee</p>
+                                    <input type="text" class="form-control"  th:value="${sal.employee}" disabled>
+                                    <p>Employee Name</p>
+                                    <input type="text" class="form-control"  th:value="${sal.employee_name}" disabled>
+                                    <p>Company</p>
+                                    <input type="text" class="form-control" th:value="${sal.company}" disabled>
+                                    <p>Department</p>
+                                    <input type="text" class="form-control" th:value="${sal.department}" disabled>
+                                    <p>Designation</p>
+                                    <input type="text" class="form-control" th:value="${sal.designation}" disabled>
+                                    <p>Branch</p>
+                                    <input type="text" class="form-control" th:value="${sal.branch}" disabled>
+                                </div>
+                                <div class="col-md-4">
+                                    <p>Posting Date</p>
+                                    <input type="date" class="form-control"  th:value="${sal.posting_date}" disabled>
+                                    <p>Letter Head</p>
+                                    <input type="text" class="form-control"  th:value="${sal.letter_head}" disabled>
+                                    <p>Payroll Frequency</p>
+                                    <input type="text" class="form-control"  th:value="${sal.payroll_frequency}" disabled>
+                                </div>
+                                <div class="col-md-4">
+                                    <p>Gross Pay</p>
+                                    <input type="text" class="form-control"  th:value="${sal.gross_pay}" disabled>
+                                    <p>Gross Year To Date</p>
+                                    <input type="text" class="form-control"  th:value="${sal.gross_year_to_date}" disabled>
+                                    <p>Total Deduction</p>
+                                    <input type="text" class="form-control"  th:value="${sal.total_deduction}" disabled>
+                                </div>
+                            </div><hr>
+                            <div class="col-md-12 row" style="margin-bottom: 25px;">
+                                <div class="col-md-6">
+                                    <p>Net Pay</p>
+                                    <input type="text" class="form-control"  th:value="${sal.net_pay}" disabled>
+                                    <p>Rounded Total</p>
+                                    <input type="text" class="form-control"  th:value="${sal.rounded_total}" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>Year To Date</p>
+                                    <input type="text" class="form-control"  th:value="${sal.year_to_date}" disabled>
+                                    <p>Month To Date</p>
+                                    <input type="text" class="form-control"  th:value="${sal.month_to_date}" disabled>
+                                </div>
+                            </div><hr>
+                            <div class="col-md-12 row" style="margin-bottom: 25px;">
+                                <div class="col-md-6">
+                                    <p>Total in words</p>
+                                    <input type="text" class="form-control"  th:value="${sal.total_in_words}" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,716 @@
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Payment Entry for</span> <span th:text="${reference_name}"></span></h4>
+
+
+<form th:action="@{/payment/save}" method="post" th:object="${payment}" th:if="${payment.status=='Not Saved'}">
+    <input type="hidden" th:field="*{status}" required/><br>
+    <input type="hidden" th:field="*{name}" required/><br>
+    <input type="hidden" th:field="*{title}" required/><br>
+    <input type="hidden" th:field="*{received_amount}" required/><br>
+    <input type="hidden" name="reference_name" th:value="${reference_name}" required/><br>
+    <div class="card">
+    <div class="card-header">
+        <div class="row">
+        <div class="col-md-12 row">
+            <div class="col-md-6">
+            <h5>
+                Payement Entry
+                <span class="badge rounded-pill bg-warning" th:text="${payment.status}"></span>
+            </h5>
+            </div>
+            <div class="col-md-6">
+                <div style="text-align:right">
+                    <button class="btn btn-primary" type="submit">Save & Submit</button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div><br><br>
+
+    <div th:if="${success != null}" class="alert alert-success alert-dismissible" role="alert">
+    <small th:text="${success}"></small>  
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${error != null}" class="alert alert-danger alert-dismissible" role="alert">
+    <small th:text="${error}"></small>  
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="card">
+        <h4 class="card-header">Type of Payment</h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Series</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{naming_series}"  readonly required/><br>
+                </div>
+                <div class="col-md-5">Payment Type</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{payment_type}" required>
+                        <option value="Pay" selected>Pay</option>
+                        <option value="Receive">Receive</option>
+                        <option value="Internal Transfer">Internal Transfer</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Posting Date</div>
+                <div class="col-md-7">
+                    <input type="date" class="form-control" th:field="*{posting_date}" required/><br>
+                </div>
+                <div class="col-md-5">Mode of Payments</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{mode_of_payment}" required>
+                        <option value="Bank Draft">Bank Draft</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Cheque">Cheque</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Wire Transfer">Wire Transfer</option>
+                    </select><br>
+                </div>
+            </div>
+        </div><hr>
+        
+        <h4 class="card-header">Payment From / To</h4>
+        <div class="row container">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Party Type</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{party_type}" required>
+                        <option value="Supplier">Supplier</option>
+                        <option value="Customer">Customer</option>
+                        <option value="Employee">Employee</option>
+                        <option value="Shareholder">Shareholder</option>
+                    </select><br>
+                </div>
+                <div class="col-md-5">Party</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{party}" readonly required/><br>    
+                </div>
+                <div class="col-md-5">Party Name</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{party_name}" readonly required/><br>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div><hr>
+
+        <h4 class="card-header">Accounts</h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Account Paid From</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{paid_from}" required>
+                        <option value="Bank Account - CC">Bank Account - CC</option>
+                        <option value="Cash - CC">Cash - CC</option>
+                    </select><br>
+                </div>
+                <div class="col-md-5">Account Currency (From)</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{paid_from_account_currency}" required readonly/><br>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Account Paid To</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{paid_to}" required>
+                        <option value="Creditors - CC">Creditors - CC</option>
+                    </select><br>
+                </div>
+                <div class="col-md-5">Account Currency (To)</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{paid_to_account_currency}" required readonly/><br>
+                </div>
+            </div>
+        </div><hr>
+        
+        <h4 class="card-header">Amount</h4>
+        <div class="row container">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Paid Amount</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{paid_amount}" readonly required/><br>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div><hr>
+        
+        <h4 class="card-header">Writeoff
+            <p style="font-size:12px; font-weight:100">The amount of Unallocated Amount won't paid the purchase invoice attached to this payment.</p></h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Total Allocated Amount (EUR)</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{total_allocated_amount}" readonly required/><br>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Unallocated Amount (EUR)</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{unallocated_amount}" required/><br>
+                </div>
+                <div class="col-md-5">Difference Amount (EUR)</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{difference_amount}" required readonly/><br>
+                </div>
+            </div>
+        </div><hr>
+        
+        <h4 class="card-header">
+            Transaction ID    
+            <p style="font-size:12px; font-weight:100">Always set this except for Mode of Paymen = "Cash"</p>
+        </h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Cheque/Reference No</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{reference_no}" required/><br>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Cheque/Reference Date</div>
+                <div class="col-md-7">
+                    <input type="date" class="form-control" th:field="*{reference_date}" required/><br>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+<form th:action="@{/payment/cancel}" method="post" th:object="${payment}" th:if="${payment.status=='Submitted'}">
+    <input type="hidden" th:field="*{status}" required/>
+    <input type="hidden" th:field="*{name}" required/>
+    <input type="hidden" th:field="*{title}" required/>
+    <input type="hidden" th:field="*{received_amount}" required/>
+    <div class="card">
+    <div class="card-header">
+        <div class="row">
+        <div class="col-md-12 row">
+            <div class="col-md-6">
+            <h5>
+                Payement Entry
+                <span class="badge rounded-pill bg-info" th:text="${payment.status}"></span>
+            </h5>
+            </div>
+            <div class="col-md-6">
+                <div style="text-align:right">
+                    <button class="btn btn-primary" type="submit">Cancel permanantly</button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div><br><br>
+
+    <div th:if="${success != null}" class="alert alert-success alert-dismissible" role="alert">
+    <small th:text="${success}"></small>  
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${error != null}" class="alert alert-danger alert-dismissible" role="alert">
+    <small th:text="${error}"></small>  
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="card">
+        <h4 class="card-header">Type of Payment</h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Series</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{naming_series}"  readonly required/><br>
+                </div>
+                <div class="col-md-5">Payment Type</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{payment_type}" required>
+                        <option value="Pay" selected>Pay</option>
+                        <option value="Receive">Receive</option>
+                        <option value="Internal Transfer">Internal Transfer</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Posting Date</div>
+                <div class="col-md-7">
+                    <input type="date" class="form-control" th:field="*{posting_date}" required/><br>
+                </div>
+                <div class="col-md-5">Mode of Payments</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{mode_of_payment}" required>
+                        <option value="Bank Draft">Bank Draft</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Cheque">Cheque</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Wire Transfer">Wire Transfer</option>
+                    </select><br>
+                </div>
+            </div>
+        </div><hr>
+        
+        <h4 class="card-header">Payment From / To</h4>
+        <div class="row container">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Party Type</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{party_type}" required>
+                        <option value="Supplier">Supplier</option>
+                        <option value="Customer">Customer</option>
+                        <option value="Employee">Employee</option>
+                        <option value="Shareholder">Shareholder</option>
+                    </select><br>
+                </div>
+                <div class="col-md-5">Party</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{party}" readonly required/><br>    
+                </div>
+                <div class="col-md-5">Party Name</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{party_name}" readonly required/><br>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div><hr>
+
+        <h4 class="card-header">Accounts</h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Account Paid From</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{paid_from}" required>
+                        <option value="Bank Account - CC">Bank Account - CC</option>
+                        <option value="Cash - CC">Cash - CC</option>
+                    </select><br>
+                </div>
+                <div class="col-md-5">Account Currency (From)</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{paid_from_account_currency}" required readonly/><br>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Account Paid To</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{paid_to}" required>
+                        <option value="Creditors - CC">Creditors - CC</option>
+                    </select><br>
+                </div>
+                <div class="col-md-5">Account Currency (To)</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{paid_to_account_currency}" required readonly/><br>
+                </div>
+            </div>
+        </div><hr>
+        
+        <h4 class="card-header">Amount</h4>
+        <div class="row container">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Paid Amount</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{paid_amount}" readonly required/><br>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div><hr>
+        
+        <h4 class="card-header">Writeoff
+            <p style="font-size:12px; font-weight:100">The amount of Unallocated Amount won't paid the purchase invoice attached to this payment.</p></h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Total Allocated Amount (EUR)</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{total_allocated_amount}" readonly required/><br>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Unallocated Amount (EUR)</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{unallocated_amount}" required/><br>
+                </div>
+                <div class="col-md-5">Difference Amount (EUR)</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{difference_amount}" required readonly/><br>
+                </div>
+            </div>
+        </div><hr>
+        
+        <h4 class="card-header">
+            Transaction ID    
+            <p style="font-size:12px; font-weight:100">Always set this except for Mode of Paymen = "Cash"</p>
+        </h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Cheque/Reference No</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{reference_no}" required/><br>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Cheque/Reference Date</div>
+                <div class="col-md-7">
+                    <input type="date" class="form-control" th:field="*{reference_date}" required/><br>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+<form th:action="@{/payment/submit}" method="post" th:object="${payment}" th:if="${payment.status=='Draft'}">
+    <input type="hidden" th:field="*{status}" required/>
+    <input type="hidden" th:field="*{name}" required/>
+    <input type="hidden" th:field="*{title}" required/>
+    <input type="hidden" th:field="*{received_amount}" required/>
+    <div class="card">
+    <div class="card-header">
+        <div class="row">
+        <div class="col-md-12 row">
+            <div class="col-md-6">
+            <h5>
+                Payement Entry
+                <span class="badge rounded-pill bg-warning" th:text="${payment.status}"></span>
+            </h5>
+            </div>
+            <div class="col-md-6">
+                <div style="text-align:right">
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div><br><br>
+
+    <div th:if="${success != null}" class="alert alert-success alert-dismissible" role="alert">
+    <small th:text="${success}"></small>  
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${error != null}" class="alert alert-danger alert-dismissible" role="alert">
+    <small th:text="${error}"></small>  
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="card">
+        <h4 class="card-header">Type of Payment</h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Series</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{naming_series}"  readonly required/><br>
+                </div>
+                <div class="col-md-5">Payment Type</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{payment_type}" required>
+                        <option value="Pay" selected>Pay</option>
+                        <option value="Receive">Receive</option>
+                        <option value="Internal Transfer">Internal Transfer</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Posting Date</div>
+                <div class="col-md-7">
+                    <input type="date" class="form-control" th:field="*{posting_date}" required/><br>
+                </div>
+                <div class="col-md-5">Mode of Payments</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{mode_of_payment}" required>
+                        <option value="Bank Draft">Bank Draft</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Cheque">Cheque</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Wire Transfer">Wire Transfer</option>
+                    </select><br>
+                </div>
+            </div>
+        </div><hr>
+        
+        <h4 class="card-header">Payment From / To</h4>
+        <div class="row container">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Party Type</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{party_type}" required>
+                        <option value="Supplier">Supplier</option>
+                        <option value="Customer">Customer</option>
+                        <option value="Employee">Employee</option>
+                        <option value="Shareholder">Shareholder</option>
+                    </select><br>
+                </div>
+                <div class="col-md-5">Party</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{party}" readonly required/><br>    
+                </div>
+                <div class="col-md-5">Party Name</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{party_name}" readonly required/><br>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div><hr>
+
+        <h4 class="card-header">Accounts</h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Account Paid From</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{paid_from}" required>
+                        <option value="Bank Account - CC">Bank Account - CC</option>
+                        <option value="Cash - CC">Cash - CC</option>
+                    </select><br>
+                </div>
+                <div class="col-md-5">Account Currency (From)</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{paid_from_account_currency}" required readonly/><br>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Account Paid To</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{paid_to}" required>
+                        <option value="Creditors - CC">Creditors - CC</option>
+                    </select><br>
+                </div>
+                <div class="col-md-5">Account Currency (To)</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{paid_to_account_currency}" required readonly/><br>
+                </div>
+            </div>
+        </div><hr>
+        
+        <h4 class="card-header">Amount</h4>
+        <div class="row container">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Paid Amount</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{paid_amount}" readonly required/><br>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div><hr>
+        
+        <h4 class="card-header">Writeoff
+            <p style="font-size:12px; font-weight:100">The amount of Unallocated Amount won't paid the purchase invoice attached to this payment.</p></h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Total Allocated Amount (EUR)</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{total_allocated_amount}" readonly required/><br>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Unallocated Amount (EUR)</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{unallocated_amount}" required/><br>
+                </div>
+                <div class="col-md-5">Difference Amount (EUR)</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{difference_amount}" required readonly/><br>
+                </div>
+            </div>
+        </div><hr>
+        
+        <h4 class="card-header">
+            Transaction ID    
+            <p style="font-size:12px; font-weight:100">Always set this except for Mode of Paymen = "Cash"</p>
+        </h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Cheque/Reference No</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{reference_no}" required/><br>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Cheque/Reference Date</div>
+                <div class="col-md-7">
+                    <input type="date" class="form-control" th:field="*{reference_date}" required/><br>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+<form method="post" th:object="${payment}" th:if="${payment.status=='Cancelled'}">
+    <input type="hidden" th:field="*{status}" required/><br>
+    <input type="hidden" th:field="*{name}" required/><br>
+    <input type="hidden" th:field="*{title}" required/><br>
+    <input type="hidden" th:field="*{received_amount}" required/><br>
+    <div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-12 row">
+                <div class="col-md-12">
+                    <h5>
+                        Payement Entry
+                        <span class="badge rounded-pill bg-danger" th:text="${payment.status}"></span>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div><br><br>
+
+    <div th:if="${success != null}" class="alert alert-success alert-dismissible" role="alert">
+    <small th:text="${success}"></small>  
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${error != null}" class="alert alert-danger alert-dismissible" role="alert">
+    <small th:text="${error}"></small>  
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="card">
+        <h4 class="card-header">Type of Payment</h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Series</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{naming_series}"  readonly required/><br>
+                </div>
+                <div class="col-md-5">Payment Type</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{payment_type}" required>
+                        <option value="Pay" selected>Pay</option>
+                        <option value="Receive">Receive</option>
+                        <option value="Internal Transfer">Internal Transfer</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Posting Date</div>
+                <div class="col-md-7">
+                    <input type="date" class="form-control" th:field="*{posting_date}" required/><br>
+                </div>
+                <div class="col-md-5">Mode of Payments</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{mode_of_payment}" required>
+                        <option value="Bank Draft">Bank Draft</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Cheque">Cheque</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Wire Transfer">Wire Transfer</option>
+                    </select><br>
+                </div>
+            </div>
+        </div><hr>
+        
+        <h4 class="card-header">Payment From / To</h4>
+        <div class="row container">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Party Type</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{party_type}" required>
+                        <option value="Supplier">Supplier</option>
+                        <option value="Customer">Customer</option>
+                        <option value="Employee">Employee</option>
+                        <option value="Shareholder">Shareholder</option>
+                    </select><br>
+                </div>
+                <div class="col-md-5">Party</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{party}" readonly required/><br>    
+                </div>
+                <div class="col-md-5">Party Name</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{party_name}" readonly required/><br>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div><hr>
+
+        <h4 class="card-header">Accounts</h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Account Paid From</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{paid_from}" required>
+                        <option value="Bank Account - CC">Bank Account - CC</option>
+                        <option value="Cash - CC">Cash - CC</option>
+                    </select><br>
+                </div>
+                <div class="col-md-5">Account Currency (From)</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{paid_from_account_currency}" required readonly/><br>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Account Paid To</div>
+                <div class="col-md-7">
+                    <select class="form-control" th:field="*{paid_to}" required>
+                        <option value="Creditors - CC">Creditors - CC</option>
+                    </select><br>
+                </div>
+                <div class="col-md-5">Account Currency (To)</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{paid_to_account_currency}" required readonly/><br>
+                </div>
+            </div>
+        </div><hr>
+        
+        <h4 class="card-header">Amount</h4>
+        <div class="row container">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Paid Amount</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{paid_amount}" readonly required/><br>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div><hr>
+        
+        <h4 class="card-header">Writeoff
+            <p style="font-size:12px; font-weight:100">The amount of Unallocated Amount won't paid the purchase invoice attached to this payment.</p></h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Total Allocated Amount (EUR)</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{total_allocated_amount}" readonly required/><br>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Unallocated Amount (EUR)</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{unallocated_amount}" required/><br>
+                </div>
+                <div class="col-md-5">Difference Amount (EUR)</div>
+                <div class="col-md-7">
+                    <input type="number" class="form-control" th:field="*{difference_amount}" required readonly/><br>
+                </div>
+            </div>
+        </div><hr>
+        
+        <h4 class="card-header">
+            Transaction ID    
+            <p style="font-size:12px; font-weight:100">Always set this except for Mode of Paymen = "Cash"</p>
+        </h4>
+        <div class="row container">
+            <div class="col-md-6 row">
+                <div class="col-md-5">Cheque/Reference No</div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" th:field="*{reference_no}" required/><br>
+                </div>
+            </div>
+            <div class="col-md-6 row">
+                <div class="col-md-5">Cheque/Reference Date</div>
+                <div class="col-md-7">
+                    <input type="date" class="form-control" th:field="*{reference_date}" required/><br>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

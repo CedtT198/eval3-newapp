@@ -1,0 +1,52 @@
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Payment Entry / </span>List</h4>
+
+<div th:if="${success != null}" class="alert alert-info alert-dismissible" role="alert">
+  <small th:text="${success}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div class="card">
+  <h4 class="card-header">Supplier Quotations</h4>
+  <h6 class="card-header">Filter by <span th:text="${filter_name}"></span></h6>
+  <div class="table-responsive text-nowrap">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Payment Type</th>
+          <th>Date</th>
+          <th>Mode of Payment</th>
+          <th>ID</th>
+          <!-- <th></th>-->
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        <tr th:each="payment : ${payments}">
+            <td th:text="${payment.title}"></td>
+            <td>
+              <span class="badge rounded-pill bg-info" th:text="${payment.status}" th:if="${payment.status == 'Submitted'}"></span>
+              <span class="badge rounded-pill bg-warning" th:text="${payment.status}" th:if="${payment.status == 'Draft'}"></span>
+              <span class="badge rounded-pill bg-danger" th:text="${payment.status}" th:if="${payment.status == 'Cancelled'}"></span>
+            </td>
+            <td>
+                <span class="badge rounded-pill bg-secondary" th:text="${payment.payment_type}"></span>
+            </td>
+            <td th:text="${payment.posting_date}"></td>
+            <td th:text="${payment.mode_of_payment}"></td>
+            <td th:text="${payment.name}"></td>
+            <!--<td>
+                <form th:action="@{/payment/details}" method="get">
+                    <input type="hidden" name="name" th:value="${payment.name}">
+                    <input type="hidden" name="posting_date" th:value="${payment.posting_date}">
+                    <input type="hidden" name="supplier_name" th:value="${payment.title}">
+                    <input type="hidden" name="grand_total" th:value="${payment.paid_amount}">
+                    <input type="hidden" name="status" th:value="${payment.status}">
+                    <button class="btn btn-info" type="submit">Details</button>
+                </form>
+            </td>-->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

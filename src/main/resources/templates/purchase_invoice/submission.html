@@ -1,0 +1,136 @@
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Purchase Invoice / <span th:text="${invoice.name}"></span> / </span>Submission</h4>
+
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-md-12 row">
+        <div class="col-md-6">
+          <h5>
+            <span th:text="${invoice.title}"></span>
+            <span class="badge rounded-pill bg-danger" th:text="${invoice.status}" th:if="${invoice.status == 'Cancelled'}"></span>
+            <span class="badge rounded-pill bg-success" th:text="${invoice.status}" th:if="${invoice.status == 'Paid'}"></span>
+            <span class="badge rounded-pill bg-warning" th:text="${invoice.status}" th:if="${invoice.status == 'Unpaid'}"></span>
+            <span class="badge rounded-pill bg-warning" th:text="${invoice.status}" th:if="${invoice.status == 'Draft'}"></span>
+          </h5>
+        </div>
+        <div class="col-md-6">
+          <div th:if="${invoice.status == 'Draft'}" style="text-align:right">
+            <form th:action="@{/purchase_invoice/submit}" method="post">
+              <input type="hidden" name="name" th:value="${invoice.name}"/>
+              <input type="hidden" name="docstatus" value="1"/>
+              <input type="hidden" name="status" value="Unpaid"/>
+              <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+          </div>
+          <div th:if="${invoice.status == 'Unpaid'}" style="text-align:right">
+            <form th:action="@{/payment/details}" method="post">
+              <input type="hidden" name="name" th:value="${invoice.name}">
+              <input type="hidden" name="posting_date" th:value="${invoice.posting_date}">
+              <input type="hidden" name="supplier_name" th:value="${invoice.supplier_name}">
+              <input type="hidden" name="grand_total" th:value="${invoice.grand_total}">
+              <input type="hidden" name="status" value="Not Saved">
+              <button class="btn btn-info" type="submit">Payement</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><br><br>
+
+<div th:if="${success != null}" class="alert alert-success alert-dismissible" role="alert">
+  <small th:text="${success}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div th:if="${error != null}" class="alert alert-danger alert-dismissible" role="alert">
+  <small th:text="${error}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div class="card">
+  <h4 class="card-header">Details</h4>
+  <div class="row container">
+    <div class="col-md-4 row">
+      <div class="col-md-5">Supplier</div>
+      <div class="col-md-7">
+          <input type="text" class="form-control" th:value="${invoice.supplier_name}"readonly/>
+      </div>
+    </div>
+    <div class="col-md-4 row">
+      <div class="col-md-5">Date</div>
+      <div class="col-md-7">
+          <input type="date" class="form-control" th:value="${invoice.posting_date}" name="date" readonly/><br>
+      </div>
+      
+      <div class="col-md-5">Posting time</div>
+      <div class="col-md-7">
+          <input type="text" class="form-control" th:value="${invoice.posting_time}" readonly/>
+      </div>
+    </div>
+    
+    <div class="col-md-4 row">
+        <div class="col-md-5">Is Paid</div>
+        <div class="col-md-7">
+            <input type="radio" readonly/><br>
+            <input type="radio" th:if="${invoice.is_paid == 1}" checked readonly/><br>
+        </div>
+        
+      <div class="col-md-5">Amended From</div>
+      <div class="col-md-7">
+          <input type="text" class="form-control" th:value="${invoice.amended_from}" readonly/>
+      </div>
+  </div>
+</div><hr>
+
+
+<!-- <div>
+    <h4 class="card-header">Submission</h4>
+    <div class="row container">
+      <div class="col-md-6 row">
+        <div class="col-md-5">Mode of Payments</div>
+        <div class="col-md-7">
+          <select class="form-control" name="mop" required>
+            <option value="Bank Draft">Bank Draft</option>
+            <option value="Cash">Cash</option>
+            <option value="Cheque">Cheque</option>
+            <option value="Credit Card">Credit Card</option>
+            <option value="Wire Transfer">Wire Transfer</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-6 row">
+        <div class="col-md-5">Cash/Bank Account</div>
+        <div class="col-md-7">
+            <input type="text" class="form-control" th:value="${invoice.cash_bank_account}" readonly/><br>
+        </div>
+        
+        <div class="col-md-5">Paid Amount</div>
+        <div class="col-md-7">
+            <input type="number" class="form-control" th:value="${invoice.paid_amount}"name="amount" required/><br>
+        </div>
+      </div>
+    </div>
+  </div><hr>-->
+
+  
+<div>
+  <h4 class="card-header">Item(s)</h4>
+  <div class="row container">
+    <div class="col-md-12 row">
+    </div>
+  </div>
+</div><hr>
+  
+
+<div>
+  <h4 class="card-header">Accounting Details</h4>
+  <div class="row container">
+    <div class="col-md-12 row">
+      <div class="col-md-5">Credit To</div>
+      <div class="col-md-7">
+        <input type="text" class="form-control" th:value="${invoice.credit_to}" readonly/><br>
+      </div>
+    </div>
+  </div>
+</div><hr>

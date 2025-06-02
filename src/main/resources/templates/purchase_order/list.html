@@ -1,0 +1,110 @@
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Purchase Order / </span>List</h4>
+
+<div th:if="${success != null}" class="alert alert-info alert-dismissible" role="alert">
+  <small th:text="${success}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<small class="text-light fw-semibold">Filtrer by : </small>
+<!-- Multicriteria -->
+<div class="mt-3">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#supplier_filter">Multicriteria</button> 
+    <div class="modal fade" id="supplier_filter" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalCenterTitle">Filter</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          <form th:action="@{/purchase_order/filter}" method="get">
+            <div class="modal-body">
+              <div class="row">
+                <div class="col mb-3">
+                  <label for="nameWithTitle" class="form-label">Choose a supplier</label>
+                  <select class="form-control" name="supplierName" required>
+                    <option value="All">All</option>
+                    <option th:each="supplier : ${suppliers}" th:value="${supplier.name}">
+                      <p th:text="${supplier.name}"></p>
+                    </option>
+                  </select>
+                </div>
+                <div class="col mb-3">
+                  <label for="nameWithTitle" class="form-label">Choose a status</label>
+                  <select class="form-control" name="status" required>
+                    <option value="All">All</option>
+                    <option value="Draft">Draft</option>
+                    <option value="On Hold">On Hold</option>
+                    <option value="To Receive and Bill">To Receive and Bill</option>
+                    <option value="To Bill">To Bill</option>
+                    <option value="To Receive">To Receive</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                    <option value="Closed">Closed</option>
+                    <option value="Delivered">Delivered</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Confirm</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+<br><br>
+
+<div class="card">
+  <h4 class="card-header">Purchase Orders</h4>
+  <h6 class="card-header">Filter by <span th:text="${filter_name}"></span></h6>
+  <div class="table-responsive text-nowrap">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Supplier name</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Grand Total</th>
+          <th>% Billed</th>
+          <th>% Received</th>
+          <th>ID</th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.supplier_name}"></td>
+            <td>
+                <span class="badge rounded-pill bg-warning" th:text="${order.status}" th:if="${order.status == 'Draft'}"></span>
+                <span class="badge rounded-pill bg-warning" th:text="${order.status}" th:if="${order.status == 'On Hold'}"></span>
+                <span class="badge rounded-pill bg-warning" th:text="${order.status}" th:if="${order.status == 'To Receive and Bill'}"></span>
+                <span class="badge rounded-pill bg-warning" th:text="${order.status}" th:if="${order.status == 'To Bill'}"></span>
+                <span class="badge rounded-pill bg-warning" th:text="${order.status}" th:if="${order.status == 'To Receive'}"></span>
+                <span class="badge rounded-pill bg-danger" th:text="${order.status}" th:if="${order.status == 'Cancelled'}"></span>
+                <span class="badge rounded-pill bg-success" th:text="${order.status}" th:if="${order.status == 'Closed'}"></span>
+                <span class="badge rounded-pill bg-success" th:text="${order.status}" th:if="${order.status == 'Delivered'}"></span>
+              <span class="badge rounded-pill bg-success" th:text="${order.status}" th:if="${order.status == 'Completed'}"></span>
+            </td>
+            <td th:text="${order.transaction_date}"></td>
+            <td th:text="${order.grand_total}"></td>
+            <td>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" th:style="'width:' + ${order.per_billed} + '%'"
+                      role="progressbar" th:aria-valuenow="${order.per_billed}" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+            </td>
+            <td>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" th:style="'width:' + ${order.per_received} + '%'"
+                      role="progressbar" th:aria-valuenow="${order.per_received}" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+            </td>
+            <td th:text="${order.name}"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

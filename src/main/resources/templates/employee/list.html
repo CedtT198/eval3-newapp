@@ -1,0 +1,77 @@
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Employees / </span>List</h4>
+
+<!-- <div th:if="${success != null}" class="alert alert-info alert-dismissible" role="alert">
+  <small th:text="${success}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div> -->
+
+<small class="text-light fw-semibold">Filtrer by : </small>
+<div class="mt-3">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#name_filter">Name</button> 
+    <div class="modal fade" id="name_filter" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalCenterTitle">Filter</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          <form th:action="@{/employee/filter}" method="get">
+            <div class="modal-body">
+              <div class="row">
+                <div class="col mb-3">
+                  <label for="nameWithTitle" class="form-label">Write the employee name you looking for</label>
+                  <input type="text" class="form-control" name="name" required>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+<br><br>
+
+<div class="card">
+  <h4 class="card-header">Employees</h4>
+  <h6 class="card-header">Filter by <span th:text="${filter_name}"></span></h6>
+  <div class="table-responsive text-nowrap">
+    <table class="table table-striped" th:if = "${employees.size() != 0}">
+      <thead>
+        <tr>
+          <th>Full Name</th>
+          <th>Status</th>
+          <th>Designation</th>
+          <th>ID</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        <tr th:each="emp : ${employees}">
+            <td th:text="${emp.employee_name}"></td>
+            <td>
+              <span class="badge rounded-pill bg-success" th:text="${emp.status}" th:if="${emp.status == 'Active'}"></span>
+              <!-- <span class="badge rounded-pill bg-warning" th:text="${emp.status}" th:if="${emp.status == 'Draft'}"></span>
+              <span class="badge rounded-pill bg-danger" th:text="${emp.status}" th:if="${emp.status == 'Cancelled'}"></span> -->
+            </td>
+            <td th:text="${emp.designation}"></td>
+            <td th:text="${emp.name}"></td>
+            <td>
+                <form th:action="@{/employee/details}" method="get">
+                  <input type="hidden" name="empRef" th:value="${emp.name}">
+                  <button class="btn btn-secondary" type="submit">Voir fiche</button>
+                </form>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+    <div th:unless = "${employees.size() != 0}">
+      <h2 class="card-header">No data found.</h2>
+    </div>
+  </div>
+</div>
