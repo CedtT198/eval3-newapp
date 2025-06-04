@@ -26,15 +26,11 @@ public class SalaryDetailController {
         try {
             System.out.println("Input Date: "+date.toString());
             List<SalaryDetail> details = salaryDetailService.findAll(date);
-            List<Double> total = salaryDetailService.sum(details);
-            List<String> columns = salaryDetailService.getLongestColumns(details);
-            // System.out.println(details.size());
-            // for (SalaryDetail d : details) {
-            //     System.out.println(d.getEmploye().getName());
-            //     System.out.println(d.getSalaryAssignment().getName());
-            // }
-            model.addAttribute("details", details);
+            List<String> columns = salaryDetailService.getColumns(details);
+            double[] total = salaryDetailService.sum(details);
+            
             model.addAttribute("columns", columns);
+            model.addAttribute("details", details);
             model.addAttribute("sum", total);
             model.addAttribute("filter_name", "Date ("+date.getMonth()+" "+date.getYear()+")");
         } catch (Exception e) {
@@ -47,9 +43,9 @@ public class SalaryDetailController {
 
     @GetMapping("/list")
     public String list(Model model) throws Exception {
+        model.addAttribute("columns", new ArrayList<>());
         model.addAttribute("details", new ArrayList<>());
         model.addAttribute("sum", new ArrayList<>());
-        model.addAttribute("columns", new ArrayList<>());
         model.addAttribute("filter_name", "No Filter");
         model.addAttribute("body", "salary/detail/list");
         return "layout";

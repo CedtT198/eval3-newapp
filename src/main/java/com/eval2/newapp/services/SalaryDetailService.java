@@ -11,7 +11,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import com.eval2.newapp.models.Employe;
 import com.eval2.newapp.models.SalaryAssignment;
 import com.eval2.newapp.models.SalaryDetail;
@@ -31,19 +30,52 @@ public class SalaryDetailService {
     @Autowired
     private SalaryAssignmentService salaryAssignmentService;
 
-    public List<Double> sum(List<SalaryDetail> details) {
-        List<Double> sum = new ArrayList<>();
+    public double[] sum(List<SalaryDetail> details) throws Exception {
+        List<String> columns = getColumns(details);
+        int longestSize = columns.size();
 
-        // for (SalaryDetail d : details) {
+        double[] sum = new double[longestSize+1];
+        double base = 0;
+
+        for (SalaryDetail d : details) {
+            base += d.getSalaryAssignment().getBase();
             
-        // }
-
+            List<SalaryDetailDTO> salDTO = d.getSalary_details();
+            for (int i=0; i<columns.size(); i++) {
+                
+                String col = columns.get(i);
+                try {
+                    SalaryDetailDTO sal = salDTO.get(i);
+                    String component = sal.getSalary_component().toLowerCase();
+                    if (col.toLowerCase().equals(component)) {
+                        sum[i] += sal.getAmount();
+                        // sum[i+1] = i+1;
+                    }
+                } catch (ArrayIndexOutOfBoundsException arrayEx) {
+                    sum[i] += 0; // variable
+                    // sum[i+1] = i+1;
+                } catch (Exception ex) {
+                    throw new Exception(ex);
+                }
+            }
+        }
+        // sum[sum.length-1] = base;
+        sum[0] = base;
         return sum;
     }
 
-    public List<String> getLongestColumns(List<SalaryDetail> details) {
+    public List<String> getColumns(List<SalaryDetail> details) {
         List<String> columns = new ArrayList<>();
+        int id = getLongestSalComp(details);
+        
+        for (String col : details.get(id).getColumns()) {
+            columns.add(col);
+        }
 
+        return columns;
+    }
+    
+    public int getLongestSalComp(List<SalaryDetail> details) {
         int tabSize = 0;
         int longestIndex = 0;
         for (int i=0; i < details.size(); i++) {
@@ -52,12 +84,8 @@ public class SalaryDetailService {
                 tabSize = details.get(i).getColumns().size();
             }
         }
-        
-        for (String col : details.get(longestIndex).getColumns()) {
-            columns.add(col);
-        }
 
-        return columns;
+        return longestIndex;
     }
 
     public List<SalaryDetail> findAll(LocalDate date) throws Exception {
@@ -70,8 +98,6 @@ public class SalaryDetailService {
             System.out.println("Salary Assgnment: "+assignment.getSalary_structure());
             System.out.println("Employee: "+employee.getName());
             System.out.println("Salary Details count: "+salDetailsDTO.size()+"\n");
-
-            // get columns
 
             SalaryDetail salDetail = new SalaryDetail();
             salDetail.setEmploye(employee);

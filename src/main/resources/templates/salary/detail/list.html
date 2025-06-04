@@ -46,7 +46,7 @@
                 <!-- Dynamic columns -->
                 <tr>
                     <th>Employee</th>
-                    <th>Name</th>
+                    <th>Full Name</th>
                     <th>Joining Date</th>
                     <th>Company</th>
                     <th>Designation</th>
@@ -72,6 +72,7 @@
             <tfoot>
                 <tr>
                     <th>Total</th>
+                    <th th:each="i : ${#numbers.sequence(0, 4, 1)}"> - </th>
                     <td th:each="total : ${sum}" th:text="${total}"></td>
                 </tr>
             </tfoot>
