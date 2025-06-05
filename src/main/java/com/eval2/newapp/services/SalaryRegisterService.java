@@ -42,7 +42,8 @@ public class SalaryRegisterService {
 
     public SalaryRegister findAllBetweenDate(String begin, String end) throws Exception {
         String filtersJson = String.format(
-            "{\"from_date\":\"%s\",\"to_date\":\"%s\",\"currency\":\"EUR\",\"company\":\"Cedric Company\",\"docstatus\":\"Submitted\"}",
+            // "{\"from_date\":\"%s\",\"to_date\":\"%s\",\"currency\":\"EUR\",\"company\":\"Cedric Company\",\"docstatus\":\"Submitted\"}",
+            "{\"from_date\":\"%s\",\"to_date\":\"%s\",\"currency\":\"EUR\",\"docstatus\":\"Submitted\"}",
             begin, end
         );
 
