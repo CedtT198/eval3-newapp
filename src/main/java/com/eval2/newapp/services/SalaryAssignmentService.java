@@ -23,12 +23,7 @@ public class SalaryAssignmentService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public List<SalaryAssignment> findAllByDate(LocalDate date) throws Exception {
-        YearMonth yearMonth = YearMonth.from(date);
-        LocalDate lastDayOfMonth = yearMonth.atEndOfMonth();
-
-        String startDate = date.withDayOfMonth(1).toString();
-        String endDate = lastDayOfMonth.toString();
+    public List<SalaryAssignment> findAllByDate(String startDate, String endDate) throws Exception {
         String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"from_date\",\">=\",\"" + startDate + "\"], [\"from_date\",\"<=\",\"" + endDate + "\"]]";
         
         HttpHeaders headers = new HttpHeaders();

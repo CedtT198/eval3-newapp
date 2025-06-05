@@ -41,7 +41,12 @@ public class SalaryDetailDTO {
 	public String parentfield;
 	public String parenttype;
 
-    public SalaryDetailDTO() {}
+    public SalaryDetailDTO() {
+        this.salary_component = "";
+    }
+    public SalaryDetailDTO(String salComp) {
+        this.salary_component = salComp;
+    }
 
     public String getName() {
         return name;

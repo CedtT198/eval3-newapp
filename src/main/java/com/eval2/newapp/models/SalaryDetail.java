@@ -9,7 +9,9 @@ public class SalaryDetail {
     List<SalaryDetailDTO> salary_details;
     List<String> columns;
     
-    public SalaryDetail() {}
+    public SalaryDetail() {
+        this.salaryAssignment= new SalaryAssignment();
+    }
 
     public Employe getEmploye() {
         return employe;
