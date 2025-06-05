@@ -50,7 +50,9 @@
                     <th>Month</th>
                     <th>Base</th>
                     <th th:each="col : ${columns}" th:text="${col}"></th>
-                    <th></th>
+                    <th>Earnings</th>
+                    <th>Deductions</th>
+                    <!-- <th></th> -->
                 </tr>
             </thead>
             <tbody class="table-border-bottom-0">
@@ -59,7 +61,9 @@
                     <td th:text="${result.salaryAssignment.from_date.getMonth()}"></td>
                     <td th:text="${result.salaryAssignment.base}"></td>
                     <td th:each="detail : ${result.salary_details}" th:text="${detail.amount}"></td>
-                    <td>
+                    <td th:text="${result.totalEarnings}"></td>
+                    <td th:text="${result.totalDeductions}"></td>
+                    <td th:if="${result.salaryAssignment.base != 0}">
                       <a th:href="@{/salary/detail/filterbymonth(date=${result.salaryAssignment.from_date})}">See more</a>
                   </td>
                 </tr>

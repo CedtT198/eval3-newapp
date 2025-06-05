@@ -21,6 +21,24 @@ public class SalaryDetailController {
     @Autowired
     SalaryDetailService salaryDetailService;
 
+    @GetMapping("/dashboard/filterbydate")
+    public String filterdashboardbydate(Model model, @RequestParam("begin") LocalDate begin, @RequestParam("end") LocalDate end) throws Exception {
+        if (begin.isAfter(end)) {
+            model.addAttribute("filter_name", "No Filter");
+            model.addAttribute("error", "Start date can\'t be after End date");
+        }
+        else {
+            try {
+                model.addAttribute("filter_name", "Date ("+begin.toString()+" to "+end.toString()+")");
+            } catch (Exception e) {
+                e.printStackTrace();
+                model.addAttribute("error", e.getMessage());
+            }
+        }
+            model.addAttribute("body", "salary/detail/dashboard");
+            return "layout";
+    }
+    
     @GetMapping("/dashboard")
     public String dashboard(Model model) throws Exception {
         model.addAttribute("filter_name", "No Filter");

@@ -61,6 +61,7 @@ public class SalaryDetailService {
                         try {
                             System.out.println(j);
                             System.out.println(detail.getSalary_details().get(j).getSalary_component());
+                            d.getSalary_details().get(j).setParentfield(detail.getSalary_details().get(j).getParentfield());
                             d.getSalary_details().get(j).setAmount(d.getSalary_details().get(j).getAmount()+detail.getSalary_details().get(j).getAmount());
                         } catch (ArrayIndexOutOfBoundsException ae) {
                             d.getSalary_details().get(j).setAmount(d.getSalary_details().get(j).getAmount());
@@ -88,6 +89,8 @@ public class SalaryDetailService {
         List<SalaryDetail> salDetails = getSalaryDetailFromAss(salaryAssignments);
         return salDetails;
     }
+
+    // public void set
 
     private List<SalaryDetail> getSalaryDetailFromAss(List<SalaryAssignment> salaryAssignments) throws Exception {
         List<SalaryDetail> salDetails = new ArrayList<>();
