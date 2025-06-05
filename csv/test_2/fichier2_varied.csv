@@ -1,0 +1,7 @@
+salary structure,name,Abbr,type,valeur,company
+gasyA,Salaire Base,SB,earning,base,My Company
+gasyA,Indemnité Logement,IL,earning,SB * 0.4,My Company
+gasyA,Retenue Fiscale,RF,deduction,(SB + IL) * 0.17,My Company
+gasyB,Salaire Base,SB,earning,base,My Company
+gasyB,Prime Exceptionnelle,PE,earning,SB * 0.3,My Company
+gasyB,Retenue Sociale,RS,deduction,(SB + PE) * 0.19,My Company

@@ -1,0 +1,7 @@
+salary structure,name,Abbr,type,valeur,company
+gasyX,Salaire Base,SB,earning,base,My Company
+gasyX,Indemnité Repas,IR,earning,SB * 0.15,My Company
+gasyX,Retenue Pension,RP,deduction,SB * 0.12,My Company
+gasyY,Salaire Base,SB,earning,base,My Company
+gasyY,Prime Projet,PP,earning,base,My Company
+gasyY,Taxe Salariale,TS,deduction,(SB + PP) * 0.1,My Company

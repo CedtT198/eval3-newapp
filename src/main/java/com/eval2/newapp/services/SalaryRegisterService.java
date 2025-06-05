@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -43,7 +42,8 @@ public class SalaryRegisterService {
 
     public SalaryRegister findAllBetweenDate(String begin, String end) throws Exception {
         String filtersJson = String.format(
-            "{\"from_date\":\"%s\",\"to_date\":\"%s\",\"currency\":\"EUR\",\"company\":\"Cedric Company\",\"docstatus\":\"Submitted\"}",
+            // "{\"from_date\":\"%s\",\"to_date\":\"%s\",\"currency\":\"EUR\",\"company\":\"Cedric Company\",\"docstatus\":\"Submitted\"}",
+            "{\"from_date\":\"%s\",\"to_date\":\"%s\",\"currency\":\"EUR\",\"docstatus\":\"Submitted\"}",
             begin, end
         );
 
