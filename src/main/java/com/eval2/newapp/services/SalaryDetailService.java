@@ -5,6 +5,8 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +33,33 @@ public class SalaryDetailService {
     @Autowired
     private SalaryAssignmentService salaryAssignmentService;
 
+    public double sumSalaryBase(List<SalaryDetail> salaryDetails) {
+        double sum = 0;
+
+        for (SalaryDetail salaryDetail : salaryDetails) {
+            sum += salaryDetail.getSalaryAssignment().getBase();
+        }
+    
+        return sum;
+    }
+
+    public double sumSalaryComponent(List<SalaryDetail> salaryDetails, String componentType) {
+        double sum = 0;
+
+        if (componentType.toLowerCase().equals("earnings")) {
+            for (SalaryDetail salaryDetail : salaryDetails) {
+                sum += salaryDetail.getTotalEarnings();
+            }
+        }
+        else if (componentType.toLowerCase().equals("deductions")) {
+            for (SalaryDetail salaryDetail : salaryDetails) {
+                sum += salaryDetail.getTotalDeductions();
+            }
+        }
+    
+        return sum;
+    }
+
     public List<SalaryDetail> findAllByYearGroupByMonth(int year) throws Exception {
         String startDate = LocalDate.of(year, 1, 1).toString();
         String endDate = LocalDate.of(year, 12, 31).toString();
@@ -38,7 +67,7 @@ public class SalaryDetailService {
         List<SalaryAssignment> salaryAssignments = salaryAssignmentService.findAllByDate(startDate, endDate);
         List<SalaryDetail> salDetails = getSalaryDetailFromAss(salaryAssignments);
         List<String> longestColumns = getColumns(salDetails);
-        System.err.println("Longest column size: "+longestColumns.size());
+        // System.err.println("Longest column size: "+longestColumns.size());
 
         List<SalaryDetail> newSalDetails = new ArrayList<>();
         for (int i=1; i<12; i++) {
@@ -56,11 +85,12 @@ public class SalaryDetailService {
                 if (detail.getSalaryAssignment().getFrom_date().getMonthValue() == i) {
                     d.getSalaryAssignment().setBase(d.getSalaryAssignment().getBase() + detail.getSalaryAssignment().getBase());
 
-                   System.err.println("Salary DTO components size: "+detail.getSalary_details().size());
+                //    System.err.println("Salary DTO components size: "+detail.getSalary_details().size());
                     for (int j = 0; j < detail.getSalary_details().size(); j++) {
                         try {
-                            System.out.println(j);
-                            System.out.println(detail.getSalary_details().get(j).getSalary_component());
+                            // System.out.println(j);
+                            // System.out.println(detail.getSalary_details().get(j).getSalary_component());
+                            // System.out.println(detail.getSalary_details().get(j).getParentfield());
                             d.getSalary_details().get(j).setParentfield(detail.getSalary_details().get(j).getParentfield());
                             d.getSalary_details().get(j).setAmount(d.getSalary_details().get(j).getAmount()+detail.getSalary_details().get(j).getAmount());
                         } catch (ArrayIndexOutOfBoundsException ae) {
@@ -72,6 +102,8 @@ public class SalaryDetailService {
                     }
                 }
             }
+            d.setTotalParentField("earnings");
+            d.setTotalParentField("deductions");
             newSalDetails.add(d);
         }
         return newSalDetails;
@@ -87,19 +119,21 @@ public class SalaryDetailService {
         List<SalaryAssignment> salaryAssignments = salaryAssignmentService.findAllByDate(startDate, endDate);
         
         List<SalaryDetail> salDetails = getSalaryDetailFromAss(salaryAssignments);
+        for (SalaryDetail salaryDetail : salDetails) {
+            salaryDetail.setTotalParentField("earnings");
+            salaryDetail.setTotalParentField("deductions");
+        }
         return salDetails;
     }
-
-    // public void set
 
     private List<SalaryDetail> getSalaryDetailFromAss(List<SalaryAssignment> salaryAssignments) throws Exception {
         List<SalaryDetail> salDetails = new ArrayList<>();
         for (SalaryAssignment assignment : salaryAssignments) {
             Employe employee = employeService.findByEmployeeRef(assignment.getEmployee());
             List<SalaryDetailDTO> salDetailsDTO = findAllBySalStruct(assignment.getSalary_structure());
-            System.out.println("Salary Assgnment: "+assignment.getSalary_structure());
-            System.out.println("Employee: "+employee.getName());
-            System.out.println("Salary Details count: "+salDetailsDTO.size()+"\n");
+            // System.out.println("Salary Assgnment: "+assignment.getSalary_structure());
+            // System.out.println("Employee: "+employee.getName());
+            // System.out.println("Salary Details count: "+salDetailsDTO.size()+"\n");
 
             SalaryDetail salDetail = new SalaryDetail();
             salDetail.setEmploye(employee);
@@ -204,5 +238,29 @@ public class SalaryDetailService {
         SalaryDetailDTO[] rfqs = objectMapper.treeToValue(dataNode, SalaryDetailDTO[].class);
 
         return Arrays.asList(rfqs);
+    }
+
+    public List<Double> exctractBase(List<SalaryDetail> salaryDetails) {
+        List<Double> result = new ArrayList<>();
+        for (SalaryDetail salDet : salaryDetails) {
+            result.add(salDet.getSalaryAssignment().getBase());
+        }
+        return result;
+    }
+
+    public List<Double> extractCompTypeAmount(List<SalaryDetail> salaryDetails, String salCompType) {
+        List<Double> result = new ArrayList<>();
+
+        if (salCompType.equals("earnings")) {
+            for (SalaryDetail salDet : salaryDetails) {
+                result.add(salDet.getTotalEarnings());
+            }
+        }
+        else if (salCompType.equals("deductions")) {
+            for (SalaryDetail salDet : salaryDetails) {
+                result.add(salDet.getTotalDeductions());
+            }
+        }
+        return result;
     }
 }

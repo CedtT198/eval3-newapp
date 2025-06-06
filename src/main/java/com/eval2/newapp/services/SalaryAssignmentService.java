@@ -24,7 +24,7 @@ public class SalaryAssignmentService {
     private ObjectMapper objectMapper;
 
     public List<SalaryAssignment> findAllByDate(String startDate, String endDate) throws Exception {
-        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"from_date\",\">=\",\"" + startDate + "\"], [\"from_date\",\"<=\",\"" + endDate + "\"]]";
+        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"from_date\",\">=\",\"" + startDate + "\"], [\"from_date\",\"<=\",\"" + endDate + "\"]]&limit=500";
         
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
@@ -44,7 +44,7 @@ public class SalaryAssignmentService {
 
         String startDate = date.withDayOfMonth(1).toString();
         String endDate = lastDayOfMonth.toString();
-        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"employee\",\"=\",\"" + empRef + "\"], [\"docstatus\",\"=\",\"1\"], [\"from_date\",\">=\",\"" + startDate + "\"], [\"from_date\",\"<=\",\"" + endDate + "\"]]";
+        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"employee\",\"=\",\"" + empRef + "\"], [\"docstatus\",\"=\",\"1\"], [\"from_date\",\">=\",\"" + startDate + "\"], [\"from_date\",\"<=\",\"" + endDate + "\"]]&limit=500";
         
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
@@ -62,7 +62,7 @@ public class SalaryAssignmentService {
         // All
         // String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"employee\",\"=\",\"" + empRef + "\"], [\"docstatus\",\"=\",\"1\"]]"; 
         // Par mois
-        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"employee\",\"=\",\"" + empRef + "\"], [\"docstatus\",\"=\",\"1\"]]";
+        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"employee\",\"=\",\"" + empRef + "\"], [\"docstatus\",\"=\",\"1\"]]&limit=500";
         
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "token "+ApiKeyService.getAPiKey());

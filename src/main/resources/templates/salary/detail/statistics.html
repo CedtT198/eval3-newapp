@@ -59,10 +59,10 @@
                 <!-- Results -->
                 <tr th:each="result: ${details}">
                     <td th:text="${result.salaryAssignment.from_date.getMonth()}"></td>
-                    <td th:text="${result.salaryAssignment.base}"></td>
-                    <td th:each="detail : ${result.salary_details}" th:text="${detail.amount}"></td>
-                    <td th:text="${result.totalEarnings}"></td>
-                    <td th:text="${result.totalDeductions}"></td>
+                    <td th:text="${#numbers.formatDecimal(result.salaryAssignment.base, 0, 'DEFAULT', 0, 'POINT')}"></td>
+                    <td th:each="detail : ${result.salary_details}" th:text="${#numbers.formatDecimal(detail.amount, 0, 'DEFAULT', 0, 'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(result.totalEarnings, 0, 'DEFAULT', 0, 'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(result.totalDeductions, 0, 'DEFAULT', 0, 'POINT')}"></td>
                     <td th:if="${result.salaryAssignment.base != 0}">
                       <a th:href="@{/salary/detail/filterbymonth(date=${result.salaryAssignment.from_date})}">See more</a>
                   </td>

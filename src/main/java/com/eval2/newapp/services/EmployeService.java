@@ -53,7 +53,7 @@ public class EmployeService {
     }
     
     public List<Employe> findAll() throws Exception {
-        String url = "http://erpnext.localhost:8000/api/resource/Employee?fields=[\"*\"]";
+        String url = "http://erpnext.localhost:8000/api/resource/Employee?fields=[\"*\"]&limit=500";
         
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "token "+ApiKeyService.getAPiKey());

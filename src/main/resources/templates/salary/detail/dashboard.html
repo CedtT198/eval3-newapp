@@ -21,12 +21,10 @@
           <div class="modal-body">
             <div class="row">
                 <div class="col mb-3">
-                  <label for="begin" class="form-label">Beginning date</label>
-                  <input type="date" class="form-control" name="begin" required>
-                </div>
-                <div class="col mb-3">
-                  <label for="end" class="form-label">End</label>
-                  <input type="date" class="form-control" name="end" required>
+                  <label for="year" class="form-label">Year</label>
+                  <select name="year" id="year" class="form-control">
+                    <option th:each="i : ${#numbers.sequence(2022, 2030, 1)}" th:text="${i}"></option>
+                  </select>
                 </div>
             </div>
           </div>
@@ -57,23 +55,19 @@
                             <img src="/assets/img/icons/unicons/paypal.png" alt="Paypal logo"/>
                         </div>
                         <div>
-                            <small class="text-muted d-block">Total Balance</small>
+                            <small class="text-muted d-block">Total Salaries</small>
                             <div class="d-flex align-items-center">
-                                <h6 class="mb-0 me-1">$459.10</h6>
-                                <small class="text-success fw-semibold">
-                                    <i class="bx bx-chevron-up"></i>
-                                    42.9%
-                                </small>
+                                <h6 class="mb-0 me-1">
+                                    <span th:text="${#numbers.formatDecimal(total_base, 0, 'DEFAULT', 0, 'POINT')}"></span>
+                                    <span th:text="${currency}"></span>
+                                </h6>
                             </div>
                         </div>
                     </div>
-                    <div id="incomeChart"></div>
+                    <div id="basesChart"></div>
                     <div class="d-flex justify-content-center pt-4 gap-2">
-                        <div class="flex-shrink-0">
-                            <div id="expensesOfWeek"></div>
-                        </div>
                         <div style="text-align: center;">
-                            <p class="mb-n1 mt-1">Salaries this period</p>
+                            <p class="mb-n1 mt-1" style="font-weight: 600;">Salaries this period</p>
                             <small class="text-muted" th:text="${filter_name}"></small>
                         </div>
                     </div>
@@ -82,255 +76,378 @@
         </div>
     </div>
     
-    <div class="col-6 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="d-flex flex-sm-column flex-row align-items-start justify-content-between col-md-3">
-                        <div class="card-title">
-                            <h4 class="text-nowrap mb-2">Earnings</h4>
-                            <div class="avatar flex-shrink-0 me-3">
-                                <img src="/assets/img/icons/unicons/cc-success.png" alt="Green credit card"/>
-                            </div>
-                        </div>
-                        <div class="mt-sm-auto">
-                            <small class="text-success text-nowrap fw-semibold">
-                                <i class="bx bx-chevron-up"></i> 68.2%
-                            </small>
-                            <h3 class="mb-0">$84,686k</h3>
-                        </div>
-                    </div>
-                    <div  class="col-md-9" id="earningsChart"></div>
-                </div>
+    <div class="col-9 mb-4">
+      <div class="card container">
+        <div id="earningsChart"></div>
+      </div>
+    </div>
+    <div class="col-3 mb-4">
+      <div class="card" style="height: 210px;">
+        <div class="card-body">
+          <div class="card-title d-flex align-items-start justify-content-between">
+            <div class="avatar flex-shrink-0">
+              <img src="/assets/img/icons/unicons/cc-success.png" alt="Credit Card" class="rounded" />
             </div>
+            <div class="dropdown">
+              <button class="btn p-0" type="button" id="cardop1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="bx bx-dots-vertical-rounded"></i>
+              </button>
+              <div class="dropdown-menu" aria-labelledby="cardop1">
+                <a class="dropdown-item" href="javascript:void(0);">View More</a>
+              </div>
+            </div>
+          </div>
+          <span class="fw-semibold d-block mb-1">Total Earnings</span>
+          <h3 class="card-title mb-2">
+            <span th:text="${currency}"></span>
+            <span th:text="${total_earnings}"></span>
+          </h3>
+          <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> Style fotsiny ty</small>
         </div>
+      </div>
     </div>
     
-    <div class="col-6 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="d-flex flex-sm-column flex-row align-items-start justify-content-between col-md-3">
-                        <div class="card-title">
-                            <h4 class="text-nowrap mb-2">Deductions</h4>
-                            <div class="avatar flex-shrink-0 me-3">
-                                <img src="/assets/img/icons/unicons/cc-warning.png" alt="Yellow credit card"/>
-                            </div>
-                        </div>
-                        <div class="mt-sm-auto">
-                            <small class="text-success text-nowrap fw-semibold">
-                                <i class="bx bx-chevron-up"></i> 68.2%
-                            </small>
-                            <h3 class="mb-0">$84,686k</h3>
-                        </div>
-                    </div>
-                    <div class="col-md-9" id="deductionsChart"></div>
-                </div>
+    <div class="col-3 mb-4">
+      <div class="card" style="height: 210px;">
+        <div class="card-body">
+          <div class="card-title d-flex align-items-start justify-content-between">
+            <div class="avatar flex-shrink-0">
+              <img src="/assets/img/icons/unicons/cc-warning.png" alt="Credit Card" class="rounded" />
             </div>
+            <div class="dropdown">
+              <button class="btn p-0" type="button" id="cardopt2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="bx bx-dots-vertical-rounded"></i>
+              </button>
+              <div class="dropdown-menu" aria-labelledby="cardopt2">
+                <a class="dropdown-item" href="javascript:void(0);">View More</a>
+              </div>
+            </div>
+          </div>
+          <span class="fw-semibold d-block mb-1">Total Deductions</span>
+          <h3 class="card-title mb-2">
+            <span th:text="${currency}"></span>
+            <span th:text="${total_deductions}"></span>
+          </h3>
+          <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> Style fotsiny ty</small>
         </div>
+      </div>
+    </div>
+    <div class="col-9 mb-4">
+      <div class="card container">
+        <div id="deductionsChart"></div>
+      </div>
     </div>
 </div>
 
 <!-- <script src="/assets/js/config.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> -->
 <script src="/assets/vendor/libs/apex-charts/apexcharts.js"></script>
 
-<script refer>
+<script th:inline="javascript">
+/*<![CDATA[*/
+    const months = /*[[${months}]]*/ [];
+    const baseData = /*[[${bases}]]*/ [];
+    const earningsData = /*[[${earnings}]]*/ [];
+    const deductionsData = /*[[${deductions}]]*/ [];
+/*]]>*/
 (function() {
+
 // Salary Details
-  const salaryDetailEl = document.querySelector('#expensesOfWeek'),
-    salaryDetailConfig = {
-      series: [65],
-      chart: {
-        width: 60,
-        height: 60,
-        type: 'radialBar'
-      },
-      plotOptions: {
-        radialBar: {
-          startAngle: 0,
-          endAngle: 360,
-          strokeWidth: '8',
-          hollow: {
-            margin: 2,
-            size: '45%'
-          },
-          track: {
-            strokeWidth: '50%',
-            background:  'red'
-          },
-          dataLabels: {
-            show: true,
-            name: {
-              show: false
-            },
-            value: {
-              formatter: function (val) {
-                return '$' + parseInt(val);
-              },
-              offsetY: 5,
-              color: '#697a8d',
-              fontSize: '13px',
-              show: true
-            }
-          }
-        }
-      },
-      fill: {
-        type: 'solid',
-        colors: config.colors.primary
-      },
-      stroke: {
-        lineCap: 'round'
-      },
-      grid: {
-        padding: {
-          top: -10,
-          bottom: -15,
-          left: -10,
-          right: -10
-        }
-      },
-      states: {
-        hover: {
-          filter: {
-            type: 'none'
-          }
-        },
-        active: {
-          filter: {
-            type: 'none'
-          }
-        }
+const basesChartEl = document.querySelector('#basesChart'),
+  baseChartConfig = {
+    series: [
+      {
+        data: baseData
       }
-    };
-    if (typeof salaryDetailEl !== undefined && salaryDetailEl !== null) {
-        const salaryDetail = new ApexCharts(salaryDetailEl, salaryDetailConfig);
-        salaryDetail.render();
-    }
-
-
-// Deductions
-const deductionsChartEl = document.querySelector('#earningsChart'),
-    deductionsChartConfig = {
-      chart: {
-        height: 80,
-        // width: 175,
-        type: 'line',
-        toolbar: {
-          show: false
-        },
-        dropShadow: {
-          enabled: true,
-          top: 10,
-          left: 5,
-          blur: 3,
-          color: config.colors.success,
-          opacity: 0.15
-        },
-        sparkline: {
-          enabled: true
-        }
+    ],
+    chart: {
+      height: 300,
+      parentHeightOffset: 0,
+      parentWidthOffset: 0,
+      toolbar: {
+        show: true
       },
-      grid: {
-        show: false,
-        padding: {
-          right: 8
-        }
-      },
-      colors: [config.colors.success],
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        width: 5,
-        curve: 'smooth'
-      },
-      series: [
+      type: 'area'
+    },
+    dataLabels: {
+      enabled: true
+    },
+    stroke: {
+      width: 2,
+      curve: 'smooth'
+    },
+    legend: {
+      show: false
+    },
+    markers: {
+      size: 6,
+      colors: 'transparent',
+      strokeColors: 'transparent',
+      strokeWidth: 4,
+      discrete: [
         {
-          data: [110, 270, 145, 245, 205, 285]
+          fillColor: config.colors.white,
+          seriesIndex: 0,
+          dataPointIndex: 7,
+          strokeColor: config.colors.primary,
+          strokeWidth: 2,
+          size: 6,
+          radius: 8
         }
       ],
-      xaxis: {
-        show: false,
-        lines: {
-          show: false
-        },
-        labels: {
-          show: false
-        },
-        axisBorder: {
-          show: false
+      hover: {
+        size: 7
+      }
+    },
+    colors: ['red'],
+    fill: {
+      type: 'gradient',
+      gradient: {
+          colorStops: [
+          {
+            offset: 0,
+            color: 'rgba(255, 0, 0, 0.5)', // rouge avec 50% d'opacité
+            opacity: 0.5
+          },
+          {
+            offset: 100,
+            color: 'rgba(255, 0, 0, 0.2)', // plus transparent en bas
+            opacity: 0.2
+          }
+        ]
+      }
+    },
+    grid: {
+      borderColor: 'gray',
+      strokeDashArray: 3,
+      padding: {
+        top: -20,
+        bottom: -8,
+        left: -10,
+        right: 8
+      }
+    },
+    xaxis: {
+      categories: months,
+      axisBorder: {
+        show: false
+      },
+      axisTicks: {
+        show: false
+      },
+      labels: {
+        show: true,
+        style: {
+          fontSize: '13px',
+          colors: 'black'
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        show: true,
+        style: {
+          fontSize: '10px',
+          colors: 'black'
         }
       },
-      yaxis: {
-        show: false
-      }
-    };
-    if (typeof deductionsChartEl !== undefined && deductionsChartEl !== null) {
-        const deductionsChart = new ApexCharts(deductionsChartEl, deductionsChartConfig);
-        deductionsChart.render();
+      tickAmount: 4
     }
-    
+  };
+  if (typeof basesChartEl !== undefined && basesChartEl !== null) {
+    const basesChart = new ApexCharts(basesChartEl, baseChartConfig);
+    basesChart.render();
+  }
+
+
 // Earnings
-const earningsChartEl = document.querySelector('#deductionsChart'),
-    earningsChartConfig = {
-      chart: {
-        height: 80,
-        // width: 175,
-        type: 'line',
-        toolbar: {
-          show: false
-        },
-        dropShadow: {
-          enabled: true,
-          top: 10,
-          left: 5,
-          blur: 3,
-          color: config.colors.warning,
-          opacity: 0.15
-        },
-        sparkline: {
-          enabled: true
-        }
+const earningsChartEl = document.querySelector('#earningsChart'),
+  earningsConfig = {
+    series: [
+      {
+        data: earningsData
+      }
+    ],
+    chart: {
+      height: 210,
+      parentHeightOffset: 0,
+      parentWidthOffset: 0,
+      toolbar: {
+        show: true
       },
-      grid: {
-        show: false,
-        padding: {
-          right: 8
-        }
-      },
-      colors: [config.colors.warning],
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        width: 5,
-        curve: 'smooth'
-      },
-      series: [
+      type: 'area'
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      width: 2,
+      curve: 'smooth'
+    },
+    legend: {
+      show: false
+    },
+    markers: {
+      size: 6,
+      colors: 'transparent',
+      strokeColors: 'transparent',
+      strokeWidth: 4,
+      discrete: [
         {
-          data: [110, 270, 145, 245, 205, 285]
+          fillColor: config.colors.white,
+          seriesIndex: 0,
+          dataPointIndex: 7,
+          strokeColor: config.colors.primary,
+          strokeWidth: 2,
+          size: 6,
+          radius: 8
         }
       ],
-      xaxis: {
-        show: false,
-        lines: {
-          show: false
-        },
-        labels: {
-          show: false
-        },
-        axisBorder: {
-          show: false
-        }
-      },
-      yaxis: {
-        show: false
+      hover: {
+        size: 7
       }
-    };
-    if (typeof earningsChartEl !== undefined && earningsChartEl !== null) {
-        const earningsChart = new ApexCharts(earningsChartEl, earningsChartConfig);
-        earningsChart.render();
+    },
+    colors: ['green'],
+    fill: {
+      type: 'solid',
+      opacity: 0
+    },
+    grid: {
+      borderColor: 'white',
+      strokeDashArray: 3,
+      padding: {
+        top: -20,
+        bottom: -8,
+        left: -10,
+        right: 8
+      }
+    },
+    xaxis: {
+      categories: months,
+      axisBorder: {
+        show: false
+      },
+      axisTicks: {
+        show: false
+      },
+      labels: {
+        show: true,
+        style: {
+          fontSize: '12px',
+          colors: 'green'
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        show: false
+        // style: {
+        //   fontSize: '8px',
+        //   colors: 'black'
+        // }
+      },
+      tickAmount: 4
     }
+  };
+  if (typeof earningsChartEl !== undefined && earningsChartEl !== null) {
+    const earningsChart = new ApexCharts(earningsChartEl, earningsConfig);
+    earningsChart.render();
+  }
+
+  
+// Earnings
+const deductionsChartEl = document.querySelector('#deductionsChart'),
+  deductionsConfig = {
+    series: [
+      {
+        data: deductionsData
+      }
+    ],
+    chart: {
+      height: 210,
+      parentHeightOffset: 0,
+      parentWidthOffset: 0,
+      toolbar: {
+        show: true
+      },
+      type: 'area'
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      width: 2,
+      curve: 'smooth'
+    },
+    legend: {
+      show: false
+    },
+    markers: {
+      size: 6,
+      colors: 'transparent',
+      strokeColors: 'transparent',
+      strokeWidth: 4,
+      discrete: [
+        {
+          fillColor: config.colors.white,
+          seriesIndex: 0,
+          dataPointIndex: 7,
+          strokeColor: config.colors.primary,
+          strokeWidth: 2,
+          size: 6,
+          radius: 8
+        }
+      ],
+      hover: {
+        size: 7
+      }
+    },
+    colors: ['orange'],
+    fill: {
+      type: 'solid',
+      opacity: 0
+    },
+    grid: {
+      borderColor: 'white',
+      strokeDashArray: 3,
+      padding: {
+        top: -20,
+        bottom: -8,
+        left: -10,
+        right: 8
+      }
+    },
+    xaxis: {
+      categories: months,
+      axisBorder: {
+        show: false
+      },
+      axisTicks: {
+        show: false
+      },
+      labels: {
+        show: true,
+        style: {
+          fontSize: '12px',
+          colors: 'orange'
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        show: false
+        // style: {
+        //   fontSize: '8px',
+        //   colors: 'black'
+        // }
+      },
+      tickAmount: 4
+    }
+  };
+  if (typeof deductionsChartEl !== undefined && deductionsChartEl !== null) {
+    const deductionsChart = new ApexCharts(deductionsChartEl, deductionsConfig);
+    deductionsChart.render();
+  }
+
 })();
 </script>
