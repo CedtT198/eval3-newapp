@@ -45,6 +45,292 @@
     <h6 class="card-header">Filter by <span th:text="${filter_name}"></span></h6>
 </div><br>
 
-<div class="card">
-    <h4 class="card-header">Salary Details</h4>
+<div class="row">
+    <!-- Salaire -->
+    <div class="col-md-12 col-lg-12 mb-4">
+        <div class="card h-100">
+            <h4 class="card-header">Salary Details</h4>
+            <div class="card-body px-0">
+                <div class="tab-content p-0">
+                    <div class="d-flex p-4 pt-3">
+                        <div class="avatar flex-shrink-0 me-3">
+                            <img src="/assets/img/icons/unicons/paypal.png" alt="Paypal logo"/>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Total Balance</small>
+                            <div class="d-flex align-items-center">
+                                <h6 class="mb-0 me-1">$459.10</h6>
+                                <small class="text-success fw-semibold">
+                                    <i class="bx bx-chevron-up"></i>
+                                    42.9%
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="incomeChart"></div>
+                    <div class="d-flex justify-content-center pt-4 gap-2">
+                        <div class="flex-shrink-0">
+                            <div id="expensesOfWeek"></div>
+                        </div>
+                        <div style="text-align: center;">
+                            <p class="mb-n1 mt-1">Salaries this period</p>
+                            <small class="text-muted" th:text="${filter_name}"></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="d-flex flex-sm-column flex-row align-items-start justify-content-between col-md-3">
+                        <div class="card-title">
+                            <h4 class="text-nowrap mb-2">Earnings</h4>
+                            <div class="avatar flex-shrink-0 me-3">
+                                <img src="/assets/img/icons/unicons/cc-success.png" alt="Green credit card"/>
+                            </div>
+                        </div>
+                        <div class="mt-sm-auto">
+                            <small class="text-success text-nowrap fw-semibold">
+                                <i class="bx bx-chevron-up"></i> 68.2%
+                            </small>
+                            <h3 class="mb-0">$84,686k</h3>
+                        </div>
+                    </div>
+                    <div  class="col-md-9" id="earningsChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="d-flex flex-sm-column flex-row align-items-start justify-content-between col-md-3">
+                        <div class="card-title">
+                            <h4 class="text-nowrap mb-2">Deductions</h4>
+                            <div class="avatar flex-shrink-0 me-3">
+                                <img src="/assets/img/icons/unicons/cc-warning.png" alt="Yellow credit card"/>
+                            </div>
+                        </div>
+                        <div class="mt-sm-auto">
+                            <small class="text-success text-nowrap fw-semibold">
+                                <i class="bx bx-chevron-up"></i> 68.2%
+                            </small>
+                            <h3 class="mb-0">$84,686k</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-9" id="deductionsChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- <script src="/assets/js/config.js"></script> -->
+<script src="/assets/vendor/libs/apex-charts/apexcharts.js"></script>
+
+<script refer>
+(function() {
+// Salary Details
+  const salaryDetailEl = document.querySelector('#expensesOfWeek'),
+    salaryDetailConfig = {
+      series: [65],
+      chart: {
+        width: 60,
+        height: 60,
+        type: 'radialBar'
+      },
+      plotOptions: {
+        radialBar: {
+          startAngle: 0,
+          endAngle: 360,
+          strokeWidth: '8',
+          hollow: {
+            margin: 2,
+            size: '45%'
+          },
+          track: {
+            strokeWidth: '50%',
+            background:  'red'
+          },
+          dataLabels: {
+            show: true,
+            name: {
+              show: false
+            },
+            value: {
+              formatter: function (val) {
+                return '$' + parseInt(val);
+              },
+              offsetY: 5,
+              color: '#697a8d',
+              fontSize: '13px',
+              show: true
+            }
+          }
+        }
+      },
+      fill: {
+        type: 'solid',
+        colors: config.colors.primary
+      },
+      stroke: {
+        lineCap: 'round'
+      },
+      grid: {
+        padding: {
+          top: -10,
+          bottom: -15,
+          left: -10,
+          right: -10
+        }
+      },
+      states: {
+        hover: {
+          filter: {
+            type: 'none'
+          }
+        },
+        active: {
+          filter: {
+            type: 'none'
+          }
+        }
+      }
+    };
+    if (typeof salaryDetailEl !== undefined && salaryDetailEl !== null) {
+        const salaryDetail = new ApexCharts(salaryDetailEl, salaryDetailConfig);
+        salaryDetail.render();
+    }
+
+
+// Deductions
+const deductionsChartEl = document.querySelector('#earningsChart'),
+    deductionsChartConfig = {
+      chart: {
+        height: 80,
+        // width: 175,
+        type: 'line',
+        toolbar: {
+          show: false
+        },
+        dropShadow: {
+          enabled: true,
+          top: 10,
+          left: 5,
+          blur: 3,
+          color: config.colors.success,
+          opacity: 0.15
+        },
+        sparkline: {
+          enabled: true
+        }
+      },
+      grid: {
+        show: false,
+        padding: {
+          right: 8
+        }
+      },
+      colors: [config.colors.success],
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        width: 5,
+        curve: 'smooth'
+      },
+      series: [
+        {
+          data: [110, 270, 145, 245, 205, 285]
+        }
+      ],
+      xaxis: {
+        show: false,
+        lines: {
+          show: false
+        },
+        labels: {
+          show: false
+        },
+        axisBorder: {
+          show: false
+        }
+      },
+      yaxis: {
+        show: false
+      }
+    };
+    if (typeof deductionsChartEl !== undefined && deductionsChartEl !== null) {
+        const deductionsChart = new ApexCharts(deductionsChartEl, deductionsChartConfig);
+        deductionsChart.render();
+    }
+    
+// Earnings
+const earningsChartEl = document.querySelector('#deductionsChart'),
+    earningsChartConfig = {
+      chart: {
+        height: 80,
+        // width: 175,
+        type: 'line',
+        toolbar: {
+          show: false
+        },
+        dropShadow: {
+          enabled: true,
+          top: 10,
+          left: 5,
+          blur: 3,
+          color: config.colors.warning,
+          opacity: 0.15
+        },
+        sparkline: {
+          enabled: true
+        }
+      },
+      grid: {
+        show: false,
+        padding: {
+          right: 8
+        }
+      },
+      colors: [config.colors.warning],
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        width: 5,
+        curve: 'smooth'
+      },
+      series: [
+        {
+          data: [110, 270, 145, 245, 205, 285]
+        }
+      ],
+      xaxis: {
+        show: false,
+        lines: {
+          show: false
+        },
+        labels: {
+          show: false
+        },
+        axisBorder: {
+          show: false
+        }
+      },
+      yaxis: {
+        show: false
+      }
+    };
+    if (typeof earningsChartEl !== undefined && earningsChartEl !== null) {
+        const earningsChart = new ApexCharts(earningsChartEl, earningsChartConfig);
+        earningsChart.render();
+    }
+})();
+</script>
