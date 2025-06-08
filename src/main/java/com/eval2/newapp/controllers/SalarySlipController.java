@@ -1,12 +1,17 @@
 package com.eval2.newapp.controllers;
 
+import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.eval2.newapp.models.Employe;
+import com.eval2.newapp.models.SalarySlip;
+import com.eval2.newapp.services.EmployeService;
 import com.eval2.newapp.services.ExportService;
 import com.eval2.newapp.services.SalarySlipService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,8 +23,36 @@ public class SalarySlipController {
     @Autowired
     SalarySlipService salarySlipService;
     @Autowired
+    EmployeService employeService;
+    @Autowired
     ExportService exportService;
     
+    @PostMapping("/insert")
+    public String insert(RedirectAttributes redirectAttributes, @RequestParam("empRef") String empRef, @RequestParam("postingDate") LocalDate postingDate) {
+        try {
+            Employe emp = employeService.findByEmployeeRef(empRef);
+            
+            postingDate = postingDate.plusDays(1);
+
+            SalarySlip salarySlip = new SalarySlip();
+            salarySlip.setEmployee(emp.getEmployee());
+            // salarySlip.setEmployee_name(emp.getEmployee_name());
+            // salarySlip.setCompany(emp.getCompany());
+            // salarySlip.setCurrency(emp.getSalary_currency());
+            salarySlip.setPosting_date(postingDate);
+            salarySlip.setPayroll_entry("Monthly");
+            salarySlip.setStart_date(postingDate);
+            salarySlip.setEnd_date(postingDate.plusMonths(1));
+
+            redirectAttributes.addFlashAttribute("salaries", salarySlipService.save(salarySlip));
+            redirectAttributes.addFlashAttribute("success", "Salary Slip inserted successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/employee/details?empRef="+empRef;
+    }
+
     @GetMapping("/exportPDF")
     public String exportPDF(RedirectAttributes redirectAttributes, @RequestParam("salRef") String salRef, HttpServletResponse response) throws Exception {
         try {
@@ -33,7 +66,7 @@ public class SalarySlipController {
     }
 
     @GetMapping("/list")
-    public String list(Model model) throws Exception {
+    public String list(Model model) throws Exception { 
         model.addAttribute("salaries", salarySlipService.findAll());
         model.addAttribute("body", "salary/slip/list");
         return "layout";

@@ -1,5 +1,15 @@
 <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Employees / List / </span><span th:text="${employee.name}"></span></h4>
 
+<div th:if="${success != null}" class="alert alert-success alert-dismissible" role="alert">
+  <small th:text="${success}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div th:if="${error != null}" class="alert alert-danger alert-dismissible" role="alert">
+  <small th:text="${error}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
 <div>
     <div class="row">
         <div class="col-md-12">
@@ -88,9 +98,9 @@
                                         <td th:text="${sal.from_date}"></td>
                                         <td th:text="${sal.base + ' ' + sal.currency}"></td>
                                         <td>
-                                            <form>
-                                            <!-- <form th:action="${}"> -->                                                
-                                                <!-- <input type="hidden" name="empRef" th:value="${emp.name}"> -->
+                                            <form th:action="@{/salary/slip/insert}" method="post">
+                                                <input type="hidden" name="empRef" th:value="${sal.employee}">
+                                                <input type="hidden" name="postingDate" th:value="${sal.from_date}">
                                                 <button class="btn btn-warning" type="submit">Generate Salary Slip</button>
                                             </form>
                                         </td>
