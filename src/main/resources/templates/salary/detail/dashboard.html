@@ -86,14 +86,14 @@
         <div class="card-body">
           <div class="card-title d-flex align-items-start justify-content-between">
             <div class="avatar flex-shrink-0">
-              <img src="/assets/img/icons/unicons/cc-success.png" alt="Credit Card" class="rounded" />
+              <img src="/assets/img/icons/unicons/wallet.png" alt="Credit Card" class="rounded" />
             </div>
             <div class="dropdown">
               <button class="btn p-0" type="button" id="cardop1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="bx bx-dots-vertical-rounded"></i>
               </button>
               <div class="dropdown-menu" aria-labelledby="cardop1">
-                <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                <a class="dropdown-item" th:href="@{/salary/detail/filterbyyear(year=${year})}">View More</a>
               </div>
             </div>
           </div>
@@ -119,7 +119,7 @@
                 <i class="bx bx-dots-vertical-rounded"></i>
               </button>
               <div class="dropdown-menu" aria-labelledby="cardopt2">
-                <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                <a class="dropdown-item" th:href="@{/salary/detail/filterbyyear(year=${year})}">View More</a>
               </div>
             </div>
           </div>
@@ -307,7 +307,7 @@ const earningsChartEl = document.querySelector('#earningsChart'),
         size: 7
       }
     },
-    colors: ['green'],
+    colors: ['blue'],
     fill: {
       type: 'solid',
       opacity: 0
@@ -334,7 +334,7 @@ const earningsChartEl = document.querySelector('#earningsChart'),
         show: true,
         style: {
           fontSize: '12px',
-          colors: 'green'
+          colors: 'blue'
         }
       }
     },

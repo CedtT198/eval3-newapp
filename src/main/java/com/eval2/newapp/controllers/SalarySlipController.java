@@ -28,7 +28,7 @@ public class SalarySlipController {
     ExportService exportService;
     
     @PostMapping("/insert")
-    public String insert(RedirectAttributes redirectAttributes, @RequestParam("empRef") String empRef, @RequestParam("postingDate") LocalDate postingDate) {
+    public String insert(RedirectAttributes redirectAttributes, @RequestParam("empRef") String empRef, @RequestParam("salStruct") String salStruct, @RequestParam("postingDate") LocalDate postingDate) {
         try {
             Employe emp = employeService.findByEmployeeRef(empRef);
             
@@ -40,9 +40,12 @@ public class SalarySlipController {
             // salarySlip.setCompany(emp.getCompany());
             // salarySlip.setCurrency(emp.getSalary_currency());
             salarySlip.setPosting_date(postingDate);
-            salarySlip.setPayroll_entry("Monthly");
+            salarySlip.setPayroll_frequency("Monthly"); 
+            salarySlip.setSalary_structure(salStruct);
             salarySlip.setStart_date(postingDate);
             salarySlip.setEnd_date(postingDate.plusMonths(1));
+            salarySlip.setExchange_rate(1);
+            salarySlip.setDocstatus(1);
 
             redirectAttributes.addFlashAttribute("salaries", salarySlipService.save(salarySlip));
             redirectAttributes.addFlashAttribute("success", "Salary Slip inserted successfully.");

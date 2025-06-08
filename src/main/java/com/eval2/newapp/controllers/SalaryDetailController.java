@@ -34,6 +34,7 @@ public class SalaryDetailController {
         model.addAttribute("total_earnings", salaryDetailService.sumSalaryComponent(details, "earnings"));
         model.addAttribute("total_deductions", salaryDetailService.sumSalaryComponent(details, "deductions"));
         model.addAttribute("details", details);
+        model.addAttribute("year", year);
         model.addAttribute("filter_name", "Date ("+year+")");
         } catch (Exception e) {
             e.printStackTrace();

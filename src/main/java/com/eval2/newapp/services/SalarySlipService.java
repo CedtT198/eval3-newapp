@@ -23,8 +23,7 @@ public class SalarySlipService {
     private ObjectMapper objectMapper;
 
     public SalarySlip save(SalarySlip salary_slip) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(salary_slip);
+        String json = objectMapper.writeValueAsString(salary_slip);
         
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
