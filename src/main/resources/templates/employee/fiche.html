@@ -89,7 +89,7 @@
                                         <th>Salary Structure</th>
                                         <th>Date</th>
                                         <th>Base Amount</th>
-                                        <th></th>
+                                        <!-- <th></th> -->
                                     </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0">
@@ -97,14 +97,14 @@
                                         <td th:text="${sal.salary_structure}"></td>
                                         <td th:text="${sal.from_date}"></td>
                                         <td th:text="${sal.base + ' ' + sal.currency}"></td>
-                                        <td>
+                                        <!-- <td>
                                             <form th:action="@{/salary/slip/insert}" method="post">
                                                 <input type="hidden" name="empRef" th:value="${sal.employee}">
                                                 <input type="hidden" name="salStruct" th:value="${sal.salary_structure}">
                                                 <input type="hidden" name="postingDate" th:value="${sal.from_date}">
                                                 <button class="btn btn-warning" type="submit">Generate Salary Slip</button>
                                             </form>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                 </tbody>
                             </table>

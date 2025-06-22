@@ -52,7 +52,7 @@
                     <th th:each="col : ${columns}" th:text="${col}"></th>
                     <th>Earnings</th>
                     <th>Deductions</th>
-                    <!-- <th></th> -->
+                    <th>Options</th>
                 </tr>
             </thead>
             <tbody class="table-border-bottom-0">
@@ -71,9 +71,11 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <!-- <th>Total</th> -->
+                    <th>Total</th>
                     <!-- <th th:each="i : ${#numbers.sequence(0, 4, 1)}"> - </th> -->
-                    <!-- <td th:each="total : ${sum}" th:text="${total}"></td> -->
+                    <td th:each="total : ${sum}" th:text="${total}"></td>
+                    <td th:text="${total_earnings}"></td>
+                    <td th:text="${total_deductions}"></td>
                 </tr>
             </tfoot>
         </table>

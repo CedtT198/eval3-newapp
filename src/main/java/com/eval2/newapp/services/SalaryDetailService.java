@@ -18,6 +18,7 @@ import com.eval2.newapp.models.Employe;
 import com.eval2.newapp.models.SalaryAssignment;
 import com.eval2.newapp.models.SalaryDetail;
 import com.eval2.newapp.models.SalaryDetailDTO;
+import com.eval2.newapp.models.SalarySlip;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -30,6 +31,8 @@ public class SalaryDetailService {
     private ObjectMapper objectMapper;
     @Autowired
     private EmployeService employeService;
+    @Autowired
+    private SalarySlipService salarySlipService;
     @Autowired
     private SalaryAssignmentService salaryAssignmentService;
 
@@ -65,13 +68,17 @@ public class SalaryDetailService {
         String endDate = LocalDate.of(year, 12, 31).toString();
 
         List<SalaryAssignment> salaryAssignments = salaryAssignmentService.findAllByDate(startDate, endDate);
-        List<SalaryDetail> salDetails = getSalaryDetailFromAss(salaryAssignments);
-        List<String> longestColumns = getColumns(salDetails);
-        // System.err.println("Longest column size: "+longestColumns.size());
+
+        // tsy miasa anaty calcul
+        List<SalaryDetail> salDetailsForCol = getSalaryDetailFromAss(salaryAssignments, startDate,  endDate);
+        List<String> longestColumns = getColumns(salDetailsForCol);
 
         List<SalaryDetail> newSalDetails = new ArrayList<>();
         for (int i=1; i<12; i++) {
             SalaryDetail d = new SalaryDetail();
+
+            LocalDate date = LocalDate.of(year, i, 1);
+            List<SalaryDetail> salDetails = findAllFilterByMonth(date);
             
             List<SalaryDetailDTO> salDetDTO = new ArrayList<>();
             for (String col : longestColumns) {
@@ -79,10 +86,16 @@ public class SalaryDetailService {
             }
             d.setSalary_details(salDetDTO);
             d.setColumns(longestColumns);
-            d.getSalaryAssignment().setFrom_date(LocalDate.of(year, i, 1));
+            d.getSalaryAssignment().setFrom_date(date);
 
             for (SalaryDetail detail : salDetails) {
+                // System.out.println(detail.getSalaryAssignment().getFrom_date());
+                // System.out.println(detail.getSalary_details().get(0).getParent()+"\n");
+                
+                // System.out.println(detail.getSalaryAssignment());
                 if (detail.getSalaryAssignment().getFrom_date().getMonthValue() == i) {
+                    // System.out.println("ok "+i);
+                    // System.out.println(detail.getSalaryAssignment().getBase());
                     d.getSalaryAssignment().setBase(d.getSalaryAssignment().getBase() + detail.getSalaryAssignment().getBase());
 
                 //    System.err.println("Salary DTO components size: "+detail.getSalary_details().size());
@@ -102,6 +115,8 @@ public class SalaryDetailService {
                     }
                 }
             }
+            // System.out.println(d.getSalaryAssignment().getBase());
+
             d.setTotalParentField("earnings");
             d.setTotalParentField("deductions");
             newSalDetails.add(d);
@@ -118,7 +133,7 @@ public class SalaryDetailService {
 
         List<SalaryAssignment> salaryAssignments = salaryAssignmentService.findAllByDate(startDate, endDate);
         
-        List<SalaryDetail> salDetails = getSalaryDetailFromAss(salaryAssignments);
+        List<SalaryDetail> salDetails = getSalaryDetailFromAss(salaryAssignments, startDate, endDate);
         for (SalaryDetail salaryDetail : salDetails) {
             salaryDetail.setTotalParentField("earnings");
             salaryDetail.setTotalParentField("deductions");
@@ -126,11 +141,15 @@ public class SalaryDetailService {
         return salDetails;
     }
 
-    private List<SalaryDetail> getSalaryDetailFromAss(List<SalaryAssignment> salaryAssignments) throws Exception {
+    private List<SalaryDetail> getSalaryDetailFromAss(List<SalaryAssignment> salaryAssignments, String startDate, String endDate) throws Exception {
         List<SalaryDetail> salDetails = new ArrayList<>();
         for (SalaryAssignment assignment : salaryAssignments) {
             Employe employee = employeService.findByEmployeeRef(assignment.getEmployee());
-            List<SalaryDetailDTO> salDetailsDTO = findAllBySalStruct(assignment.getSalary_structure());
+            List<SalarySlip> salarySlips = salarySlipService.findAllByDate(startDate, endDate, assignment.getEmployee());
+            // System.out.println(startDate);
+            // System.out.println(endDate);
+            // System.out.println(assignment.getEmployee());
+            // List<SalaryDetailDTO> salDetailsDTO = new ArrayList<>();
             // System.out.println("Salary Assgnment: "+assignment.getSalary_structure());
             // System.out.println("Employee: "+employee.getName());
             // System.out.println("Salary Details count: "+salDetailsDTO.size()+"\n");
@@ -138,13 +157,47 @@ public class SalaryDetailService {
             SalaryDetail salDetail = new SalaryDetail();
             salDetail.setEmploye(employee);
             salDetail.setSalaryAssignment(assignment);
-            salDetail.setSalary_details(salDetailsDTO);
+            if (salarySlips.size() == 0) {
+                salDetail.setSalary_details(findAllBySalStruct(assignment.getSalary_structure()));
+            }
+            else {
+                salDetail.setSalary_details(findAllBySalStruct(salarySlips.get(0).getName()));
+            } 
             salDetail.setColumns();
-
             salDetails.add(salDetail);
         }
         return salDetails;
     }
+    
+    public List<SalaryAssignment> findAllByDate(String startDate, String endDate) throws Exception {
+        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"from_date\",\">=\",\"" + startDate + "\"], [\"from_date\",\"<=\",\"" + endDate + "\"]]&limit=500";
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.GET, entity, JsonNode.class);
+
+        JsonNode dataNode = response.getBody().get("data");
+        SalaryAssignment[] rfqs = objectMapper.treeToValue(dataNode, SalaryAssignment[].class);
+
+        return Arrays.asList(rfqs);
+    }
+
+    // public double[] sumPerYear(List<SalaryDetail> details) throws Exception {
+    //     List<String> columns = getColumns(details);
+    //     int longestSize = columns.size();
+
+    //     double[] sum = new double[longestSize+1];
+    //     double base = 0;
+
+    //     for (SalaryDetail d : details) {
+    //         base += d.getSalaryAssignment().getBase();
+    //     }
+
+    //     sum[0] = base;
+    //     return sum;
+    // }
 
     public double[] sum(List<SalaryDetail> details) throws Exception {
         List<String> columns = getColumns(details);
@@ -164,11 +217,11 @@ public class SalaryDetailService {
                     SalaryDetailDTO sal = salDTO.get(i);
                     String component = sal.getSalary_component().toLowerCase();
                     if (col.toLowerCase().equals(component)) {
-                        sum[i] += sal.getAmount();
+                        sum[i+1] += sal.getAmount();
                         // sum[i+1] = i+1;
                     }
                 } catch (ArrayIndexOutOfBoundsException arrayEx) {
-                    sum[i] += 0; // variable
+                    sum[i+1] += 0; // variable
                     // sum[i+1] = i+1;
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -264,3 +317,57 @@ public class SalaryDetailService {
         return result;
     }
 }
+
+
+
+
+    // public List<SalaryDetail> findAllByYearGroupByMonth(int year) throws Exception {
+    //     String startDate = LocalDate.of(year, 1, 1).toString();
+    //     String endDate = LocalDate.of(year, 12, 31).toString();
+
+    //     List<SalaryAssignment> salaryAssignments = salaryAssignmentService.findAllByDate(startDate, endDate);
+    //     List<SalaryDetail> salDetails = getSalaryDetailFromAss(salaryAssignments, startDate,  endDate);
+    //     List<String> longestColumns = getColumns(salDetails);
+
+    //     List<SalaryDetail> newSalDetails = new ArrayList<>();
+    //     for (int i=1; i<12; i++) {
+    //         SalaryDetail d = new SalaryDetail();
+            
+    //         List<SalaryDetailDTO> salDetDTO = new ArrayList<>();
+    //         for (String col : longestColumns) {
+    //             salDetDTO.add(new SalaryDetailDTO(col));
+    //         }
+    //         d.setSalary_details(salDetDTO);
+    //         d.setColumns(longestColumns);
+    //         d.getSalaryAssignment().setFrom_date(LocalDate.of(year, i, 1));
+
+    //         for (SalaryDetail detail : salDetails) {
+    //             System.out.println(detail.getSalaryAssignment().getFrom_date());
+    //             System.out.println(detail.getSalary_details().get(0).getParent()+"\n");
+
+    //             if (detail.getSalaryAssignment().getFrom_date().getMonthValue() == i) {
+    //                 d.getSalaryAssignment().setBase(d.getSalaryAssignment().getBase() + detail.getSalaryAssignment().getBase());
+
+    //             //    System.err.println("Salary DTO components size: "+detail.getSalary_details().size());
+    //                 for (int j = 0; j < detail.getSalary_details().size(); j++) {
+    //                     try {
+    //                         // System.out.println(j);
+    //                         // System.out.println(detail.getSalary_details().get(j).getSalary_component());
+    //                         // System.out.println(detail.getSalary_details().get(j).getParentfield());
+    //                         d.getSalary_details().get(j).setParentfield(detail.getSalary_details().get(j).getParentfield());
+    //                         d.getSalary_details().get(j).setAmount(d.getSalary_details().get(j).getAmount()+detail.getSalary_details().get(j).getAmount());
+    //                     } catch (ArrayIndexOutOfBoundsException ae) {
+    //                         d.getSalary_details().get(j).setAmount(d.getSalary_details().get(j).getAmount());
+    //                     } catch (Exception e) {
+    //                         e.printStackTrace();
+    //                         throw new Exception(e);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         d.setTotalParentField("earnings");
+    //         d.setTotalParentField("deductions");
+    //         newSalDetails.add(d);
+    //     }
+    //     return newSalDetails;
+    // }

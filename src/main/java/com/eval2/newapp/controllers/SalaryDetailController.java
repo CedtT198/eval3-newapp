@@ -56,11 +56,13 @@ public class SalaryDetailController {
         try {
             List<SalaryDetail> details = salaryDetailService.findAllByYearGroupByMonth(year);
             List<String> columns = salaryDetailService.getColumns(details);
-            // double[] total = salaryDetailService.sum(details);
+            double[] total = salaryDetailService.sum(details);
             
             model.addAttribute("columns", columns);
             model.addAttribute("details", details);
-            // model.addAttribute("sum", total);
+            model.addAttribute("sum", total);
+            model.addAttribute("total_earnings", salaryDetailService.sumSalaryComponent(details, "earnings"));
+            model.addAttribute("total_deductions", salaryDetailService.sumSalaryComponent(details, "deductions"));
             model.addAttribute("filter_name", "Date ("+year+")");
         } catch (Exception e) {
             e.printStackTrace();
