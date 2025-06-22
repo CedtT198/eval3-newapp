@@ -42,8 +42,14 @@ public class SalarySlipController {
     SalaryComponentsService salaryComponentsService;
     
     @PostMapping("/updateMultiple")
-    public String updateMultiple(RedirectAttributes redirectAttributes) throws Exception { 
-        return "redirect:/salary/slip/generateMultiple";
+    public String updateMultiple(RedirectAttributes redirectAttributes, @RequestParam("comp") String comp, @RequestParam("condition") String condition,
+    @RequestParam("amount") double amount, @RequestParam("start_date") LocalDate start_date, @RequestParam("end_date") LocalDate end_date) throws Exception { 
+        System.out.println(comp);
+        System.out.println(amount);
+        System.out.println(condition);
+        System.out.println(start_date);
+        System.out.println(end_date);
+        return "redirect:/salary/slip/filterByComponents";
     }
 
     @GetMapping("/filterByComponents")

@@ -36,6 +36,21 @@ public class SalaryDetailService {
     @Autowired
     private SalaryAssignmentService salaryAssignmentService;
 
+    public List<SalaryDetailDTO> findAllFilterByComponentCondition(String salaryComponent, double amount, String condition) throws Exception {
+        String url = "http://erpnext.localhost:8000/api/method/hrms.payroll.doctype.salary_detail.salary_detail.get_all_by_components_condition?component="+salaryComponent+"&amount="+amount+"&condition="+condition;
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.GET, entity, JsonNode.class);
+
+        JsonNode dataNode = response.getBody().get("message");
+        SalaryDetailDTO[] rfqs = objectMapper.treeToValue(dataNode, SalaryDetailDTO[].class);
+
+        return Arrays.asList(rfqs);
+    }
+
     public double sumSalaryBase(List<SalaryDetail> salaryDetails) {
         double sum = 0;
 
