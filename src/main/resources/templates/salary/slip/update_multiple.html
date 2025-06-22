@@ -15,8 +15,30 @@
         <h4 class="card-header">Form</h4>
     </div>
     <div class="container mb-4">
-        <form th:action="@{/salary/slip/generateMultiple}" method="post">
+        <form th:action="@{/salary/slip/updateMultiple}" method="post">
             <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="form-floating mb-4">
+                        <select name="comp" id="comp" class="form-control">
+                            <span th:each="comp: ${components}">
+                                <option th:value="${comp.name}" th:text="${comp.salary_component}"></option>
+                            </span>
+                        </select>
+                        <label for="comp">Components</label>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <select name="condition" id="condition" class="form-control">
+                            <option value="inferior"><</option>
+                            <option value="superior">></option>
+                            <option value="equals">=</option>
+                        </select>
+                        <label for="condition">Components</label>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input type="number" class="form-control" id="amount" name="amount">
+                        <label for="amount">Amount</label>
+                    </div>
+                </div>
                 <div class="col-md-6 mb-4">
                     <div class="form-floating mb-4">
                         <input type="date" class="form-control" id="start_date" name="start_date">
@@ -27,24 +49,10 @@
                         <label for="end_date">End Date</label>
                     </div>
                 </div>
-                <div class="col-md-6 mb-4">
-                    <div class="form-floating mb-4">
-                        <select name="emp" id="emp" class="form-control">
-                            <span th:each="emp: ${employees}">
-                                <option th:value="${emp.employee}" th:text="${emp.employee_name}"></option>
-                            </span>
-                        </select>
-                        <label for="emp">Employee</label>
-                    </div>
-                    <div class="form-floating mb-4">
-                        <input type="number" class="form-control" id="amount" name="amount" placeholder="New Amount" required>
-                        <label for="amount">Amount</label>
-                    </div>
-                </div>
-                <div class="col-md-8"></div>
-                <div class="col-md-4">
+                <div class="col-md-9"></div>
+                <div class="col-md-3">
                     <div class="input-group">
-                        <input type="submit" class="form-control btn btn-primary" value="Generate salary slips">
+                        <input type="submit" class="form-control btn btn-primary" value="Update salaries">
                     </div>
                 </div>
             </div>

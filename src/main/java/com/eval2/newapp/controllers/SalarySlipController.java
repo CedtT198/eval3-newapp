@@ -18,6 +18,7 @@ import com.eval2.newapp.models.SalaryStructure;
 import com.eval2.newapp.services.EmployeService;
 import com.eval2.newapp.services.ExportService;
 import com.eval2.newapp.services.SalaryAssignmentService;
+import com.eval2.newapp.services.SalaryComponentsService;
 import com.eval2.newapp.services.SalarySlipService;
 import com.eval2.newapp.services.SalaryStructureService;
 
@@ -37,11 +38,18 @@ public class SalarySlipController {
     SalaryAssignmentService salaryAssignmentService;
     @Autowired
     SalaryStructureService salaryStructureService;
+    @Autowired
+    SalaryComponentsService salaryComponentsService;
     
-    @GetMapping("/generate")
-    public String filterToUpdate(Model model) throws Exception { 
-        model.addAttribute("employees", employeService.findAll());
-        model.addAttribute("body", "salary/slip/generate");
+    @PostMapping("/updateMultiple")
+    public String updateMultiple(RedirectAttributes redirectAttributes) throws Exception { 
+        return "redirect:/salary/slip/generateMultiple";
+    }
+
+    @GetMapping("/filterByComponents")
+    public String filterByComponents(Model model) throws Exception { 
+        model.addAttribute("components", salaryComponentsService.findAll());
+        model.addAttribute("body", "salary/slip/update_multiple");
         return "layout";
     }
 
