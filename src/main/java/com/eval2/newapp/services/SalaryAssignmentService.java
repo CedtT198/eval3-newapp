@@ -2,6 +2,7 @@ package com.eval2.newapp.services;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.eval2.newapp.models.SalaryAssignment;
-import com.eval2.newapp.models.SalaryStructure;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -27,14 +27,45 @@ public class SalaryAssignmentService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public void save(LocalDate startDate, String empRef, double amount, SalaryStructure salaryStructure) throws Exception {
+    public int updateMultipleSalaryAssignment(List<SalaryAssignment> salaryAssignments, double amount) throws Exception{
+        for (SalaryAssignment salaryAssignment : salaryAssignments) {
+            update(salaryAssignment, amount);
+            System.out.println(salaryAssignment.getName());
+        }
+        return salaryAssignments.size();
+    }
+
+    public void update(SalaryAssignment salaryAssignment, double amount) throws Exception {
+        updateStatus(salaryAssignment.getName(), 2);
+        save(salaryAssignment.getFrom_date(), salaryAssignment.getEmployee(), amount, salaryAssignment.getSalary_structure());
+    }
+
+    public void updateStatus(String name, int docstatus) throws Exception {
+        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment/" + name;
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
+ 
+        Map<String, Object> body = new HashMap<>();
+        body.put("docstatus", docstatus);
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
+        
+        System.out.println(response.getBody());
+    }   
+
+    public void save(LocalDate startDate, String empRef, double amount, String salaryStructure) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
 
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        String url = "http://erpnext.localhost:8000/api/method/hrms.payroll.doctype.salary_structure_assignment.salary_structure_assignment.create_salary_assignment?employee_ref="+empRef+"&from_date="+startDate.toString()+"&base="+amount+"&salary_structure="+salaryStructure.getName();
+        String url = "http://erpnext.localhost:8000/api/method/hrms.payroll.doctype.salary_structure_assignment.salary_structure_assignment.create_salary_assignment?employee_ref="+empRef+"&from_date="+startDate.toString()+"&base="+amount+"&salary_structure="+salaryStructure;
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
 
