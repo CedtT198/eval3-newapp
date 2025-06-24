@@ -47,9 +47,10 @@ public class SalarySlipController {
     
     @PostMapping("/updateMultiple")
     // public String updateMultiple(RedirectAttributes redirectAttributes, @RequestParam("comp") String comp, @RequestParam("condition") String condition,
-    // @RequestParam("amount") double amount, @RequestParam("start_date") LocalDate start_date, @RequestParam("end_date") LocalDate end_date) throws Exception { 
+    // @RequestParam("amount") double amount, @RequestParam("new_amount") double new_amount, @RequestParam("start_date") LocalDate start_date, @RequestParam("end_date") LocalDate end_date) throws Exception { 
     public String updateMultiple(RedirectAttributes redirectAttributes, @RequestParam("comp") String comp, @RequestParam("condition") String condition,
     @RequestParam("amount") double amount, @RequestParam("new_amount") double new_amount) throws Exception { 
+        // List<SalaryDetailDTO> salaryDTO = salaryDetailService.findAllFilterByComponentCondition(comp, amount, condition, start_date, end_date);
         List<SalaryDetailDTO> salaryDTO = salaryDetailService.findAllFilterByComponentCondition(comp, amount, condition);
         if (salaryDTO.size() != 0) {
             List<SalarySlip> salarySlips = salarySlipService.findSalarySlipFromDetails(salaryDTO);
