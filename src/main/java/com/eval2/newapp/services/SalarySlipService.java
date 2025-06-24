@@ -101,6 +101,22 @@ public class SalarySlipService {
         }
         return record; // returned as insertion record.
     }
+    
+    public int generateWithAssignment(LocalDate startDate, LocalDate endDate, String empRef, Double amount, SalaryStructure salaryStructure)  throws Exception {
+        int record = 0;
+        long monthsBetween = dateService.getMonthBetween(startDate, endDate);
+        System.out.println("Months in between : "+monthsBetween);
+        for (int i = 0; i < monthsBetween; i++) {
+            System.out.println(startDate);
+            System.out.println(empRef);
+            System.out.println(amount);
+            System.out.println(salaryStructure+"\n");
+            salaryAssignmentService.save(startDate, empRef, amount, empRef);
+            record += save(startDate, empRef, amount, salaryStructure.getName());
+            startDate = startDate.plusMonths(1);
+        }
+        return record; // returned as insertion record.
+    }
 
     public int save(LocalDate date, String empRef, double amount, String salaryStructure) throws Exception {
         HttpHeaders headers = new HttpHeaders();
@@ -218,5 +234,4 @@ public class SalarySlipService {
 
         return salarySlips;
     }
-
 }
