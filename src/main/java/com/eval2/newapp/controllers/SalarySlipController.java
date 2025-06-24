@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.eval2.newapp.models.Employe;
 import com.eval2.newapp.models.SalaryAssignment;
+import com.eval2.newapp.models.SalaryDetailDTO;
 import com.eval2.newapp.models.SalarySlip;
 import com.eval2.newapp.models.SalaryStructure;
 import com.eval2.newapp.services.EmployeService;
 import com.eval2.newapp.services.ExportService;
 import com.eval2.newapp.services.SalaryAssignmentService;
+import com.eval2.newapp.services.SalaryComponentsService;
+import com.eval2.newapp.services.SalaryDetailService;
 import com.eval2.newapp.services.SalarySlipService;
 import com.eval2.newapp.services.SalaryStructureService;
 
@@ -37,11 +40,32 @@ public class SalarySlipController {
     SalaryAssignmentService salaryAssignmentService;
     @Autowired
     SalaryStructureService salaryStructureService;
+    @Autowired
+    SalaryComponentsService salaryComponentsService;
+    @Autowired
+    SalaryDetailService salaryDetailService;
     
-    @GetMapping("/generate")
-    public String filterToUpdate(Model model) throws Exception { 
-        model.addAttribute("employees", employeService.findAll());
-        model.addAttribute("body", "salary/slip/generate");
+    @PostMapping("/updateMultiple")
+    // public String updateMultiple(RedirectAttributes redirectAttributes, @RequestParam("comp") String comp, @RequestParam("condition") String condition,
+    // @RequestParam("amount") double amount, @RequestParam("start_date") LocalDate start_date, @RequestParam("end_date") LocalDate end_date) throws Exception { 
+    public String updateMultiple(RedirectAttributes redirectAttributes, @RequestParam("comp") String comp, @RequestParam("condition") String condition,
+    @RequestParam("amount") double amount, @RequestParam("new_amount") double new_amount) throws Exception { 
+        List<SalaryDetailDTO> salaryDTO = salaryDetailService.findAllFilterByComponentCondition(comp, amount, condition);
+        if (salaryDTO.size() != 0) {
+            List<SalarySlip> salarySlips = salarySlipService.findSalarySlipFromDetails(salaryDTO);
+            int[] record = salarySlipService.updateSalary(salarySlips, new_amount);
+            redirectAttributes.addFlashAttribute("success", record[0]+" <strong>`Salary Structure Assignment`</strong> successfuly updated.<br>"+record[1]+" <strong>`Salary Slip`</strong> successfuly updated.");
+        }
+        else {
+            redirectAttributes.addFlashAttribute("warning", "No employee(s) with <strong>`Salary Slip`</strong> found within <strong>`Salary Component`='"+comp+"' "+condition+" "+amount+"</strong>.");    
+        }
+        return "redirect:/salary/slip/filterByComponents";
+    }
+
+    @GetMapping("/filterByComponents")
+    public String filterByComponents(Model model) throws Exception { 
+        model.addAttribute("components", salaryComponentsService.findAll());
+        model.addAttribute("body", "salary/slip/update_multiple");
         return "layout";
     }
 
@@ -65,7 +89,7 @@ public class SalarySlipController {
             }
             else {
                 System.out.println("tsy misy salary assignment");
-                salaryAssignmentService.save(start_date, emp, amount, salaryStructure);
+                salaryAssignmentService.save(start_date, emp, amount, salaryStructure.getName());
                 int record = salarySlipService.generate(start_date, end_date, emp, amount, salaryStructure);
                 redirectAttributes.addFlashAttribute("success", record+" salary slip generated succesfuly.");
             }

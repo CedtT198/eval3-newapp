@@ -30,8 +30,10 @@ public class SalaryComponents {
 	public int do_not_include_in_total;
 	public int remove_if_zero_valued;
 	public int disabled;
+    public String condition;
 	public double amount;
 	public int amount_based_on_formula;
+    public String formula;
 	public int is_flexible_benefit;
 	public double max_benefit_amount;
 	public int pay_against_benefit_claim;
@@ -243,6 +245,16 @@ public class SalaryComponents {
     public void setLiked_by(String liked_by) {
         this.liked_by = liked_by;
     }
-
-    
+    public String getCondition() {
+        return condition;
+    }
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+    public String getFormula() {
+        return formula;
+    }
+    public void setFormula(String formula) {
+        this.formula = formula;
+    }
 }
