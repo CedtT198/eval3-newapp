@@ -109,9 +109,8 @@ public class SalarySlipService {
         for (int i = 0; i < monthsBetween; i++) {
             System.out.println(startDate);
             System.out.println(empRef);
-            System.out.println(amount);
-            System.out.println(salaryStructure+"\n");
-            salaryAssignmentService.save(startDate, empRef, amount, empRef);
+            System.out.println(amount+"\n");
+            salaryAssignmentService.save(startDate, empRef, amount, salaryStructure.getName());
             record += save(startDate, empRef, amount, salaryStructure.getName());
             startDate = startDate.plusMonths(1);
         }

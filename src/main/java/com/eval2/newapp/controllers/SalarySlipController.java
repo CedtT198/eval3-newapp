@@ -90,9 +90,9 @@ public class SalarySlipController {
             }
             else {
                 System.out.println("tsy misy salary assignment");
-                salaryAssignmentService.save(start_date, emp, amount, salaryStructure.getName());
+                // salaryAssignmentService.save(start_date, emp, amount, salaryStructure.getName());
                 int record = salarySlipService.generateWithAssignment(start_date, end_date, emp, amount, salaryStructure);
-                redirectAttributes.addFlashAttribute("success", record+" `Salary Slip` and `Salary Structure Assignment` generated succesfuly.");
+                redirectAttributes.addFlashAttribute("success", record+" <strong>`Salary Slip`</strong> and <strong>`Salary Structure Assignment`<strong/> generated succesfuly.");
             }
         } catch (Exception e) {
             e.printStackTrace();
