@@ -38,7 +38,7 @@ public class SalarySlipController {
     @Autowired
     SalaryStructureService salaryStructureService;
     
-    @GetMapping("/generate")
+    @GetMapping("/filterToUpdate")
     public String filterToUpdate(Model model) throws Exception { 
         model.addAttribute("employees", employeService.findAll());
         model.addAttribute("body", "salary/slip/generate");
