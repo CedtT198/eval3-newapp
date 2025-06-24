@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -77,20 +77,48 @@ public class SalaryDetailService {
     }
 
     
-    public double sum(LocalDate date, String type) throws Exception {
+    public double sumYear(LocalDate date, String type) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
 
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        String url = "http://erpnext.localhost:8000/api/method/hrms.payroll.doctype.salary_detail.salary_detail.get_sum?type="+type+"&year="+date.getYear();
+        String url = "http://erpnext.localhost:8000/api/method/hrms.payroll.doctype.salary_detail.salary_detail.get_sum_year?type="+type+"&year="+date.getYear();
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<JsonNode> response = restTemplate.postForEntity(url, entity, JsonNode.class);
 
         System.out.println(response.getBody());
-        JsonNode dataNode = response.getBody().get("message").get("total");
-        double sum = objectMapper.treeToValue(dataNode, Double.class);
+        JsonNode dataNode = response.getBody().get("message").get(0).get("total");
+        // System.out.println("Data node = "+dataNode);
+
+        double sum = 0;
+        if (dataNode.equals(null)) {
+            // System.out.println("ataony");
+            sum = objectMapper.treeToValue(dataNode, Double.class);
+        }
+
+        return sum;
+    }
+    
+    public double sumMonth(LocalDate date, String type) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        String url = "http://erpnext.localhost:8000/api/method/hrms.payroll.doctype.salary_detail.salary_detail.get_sum_month?type="+type+"&month="+date.getMonthValue();
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<JsonNode> response = restTemplate.postForEntity(url, entity, JsonNode.class);
+
+        System.out.println(response.getBody());
+        JsonNode dataNode = response.getBody().get("message").get(0).get("total");
+
+        double sum = 0;
+        if (dataNode.equals(null)) {
+            sum = objectMapper.treeToValue(dataNode, Double.class);
+        }
 
         return sum;
     }
@@ -350,20 +378,43 @@ public class SalaryDetailService {
         return result;
     }
 
-    public List<Double> extractCompTypeAmount(List<SalaryDetail> salaryDetails, String salCompType) {
-        List<Double> result = new ArrayList<>();
+    // public List<Double> extractCompTypeAmount(List<SalaryDetail> salaryDetails, String salCompType) {
+    //     List<Double> result = new ArrayList<>();
 
-        if (salCompType.equals("earnings")) {
-            for (SalaryDetail salDet : salaryDetails) {
-                result.add(salDet.getTotalEarnings());
+    //     if (salCompType.equals("earnings")) {
+    //         for (SalaryDetail salDet : salaryDetails) {
+    //             result.add(salDet.getTotalEarnings());
+    //         }
+    //     }
+    //     else if (salCompType.equals("deductions")) {
+    //         for (SalaryDetail salDet : salaryDetails) {
+    //             result.add(salDet.getTotalDeductions());
+    //         }
+    //     }
+    //     return result;
+    // }
+    
+    public List<Double> extractCompTypeAmount(LocalDate date, String type) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        String url = "http://erpnext.localhost:8000/api/method/hrms.payroll.doctype.salary_detail.salary_detail.get_sal_comp_per_month?type="+type+"&year="+date.getYear();
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<JsonNode> response = restTemplate.postForEntity(url, entity, JsonNode.class);
+
+        System.out.println(response.getBody());
+        JsonNode dataNode = response.getBody().get("message");
+        
+        List<Double> totals = new ArrayList<>();
+        if (dataNode.isArray()) {
+            for (JsonNode elem : dataNode) {
+                totals.add(elem.get("total").asDouble());
             }
         }
-        else if (salCompType.equals("deductions")) {
-            for (SalaryDetail salDet : salaryDetails) {
-                result.add(salDet.getTotalDeductions());
-            }
-        }
-        return result;
+        return totals;
     }
 }
 

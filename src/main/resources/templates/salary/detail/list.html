@@ -71,8 +71,8 @@
                   <td th:text="${result.salaryAssignment.from_date}"></td>
                   <td th:text="${result.salaryAssignment.base}"></td>
                   <td th:each="detail : ${result.salary_details}" th:text="${detail.amount}"></td>
-                  <td th:text="${result.totalEarnings}"></td>
-                  <td th:text="${result.totalDeductions}"></td>
+                  <!-- <td th:text="${result.totalEarnings}"></td>
+                  <td th:text="${result.totalDeductions}"></td> -->
                 </tr>
                 <!-- Total -->
             </tbody>

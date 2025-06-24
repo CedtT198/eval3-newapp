@@ -23,16 +23,17 @@ public class SalaryDetailController {
     @GetMapping("/dashboard/filterbydate")
     public String filterdashboardbydate(Model model, @RequestParam("year") int year) throws Exception {
     try {
+        LocalDate date=  LocalDate.of(year, 1, 1);
         List<SalaryDetail> details = salaryDetailService.findAllByYearGroupByMonth(year);
         String[] months = new String[] {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         model.addAttribute("currency", "EUR");
         model.addAttribute("months", months);
         model.addAttribute("bases", salaryDetailService.exctractBase(details));
-        model.addAttribute("earnings", salaryDetailService.extractCompTypeAmount(details, "earnings"));
-        model.addAttribute("deductions", salaryDetailService.extractCompTypeAmount(details, "deductions"));
+        model.addAttribute("earnings", salaryDetailService.extractCompTypeAmount(date, "earnings"));
+        model.addAttribute("deductions", salaryDetailService.extractCompTypeAmount(date, "deductions"));
         model.addAttribute("total_base", salaryDetailService.sumSalaryBase(details));
-        model.addAttribute("total_earnings", salaryDetailService.sum(LocalDate.of(year, 1, 1)), "earnings");
-        model.addAttribute("total_deductions", salaryDetailService.sum(LocalDate.of(year, 1, 1)), "deductions");
+        model.addAttribute("total_earnings", salaryDetailService.sumYear(date, "earnings"));
+        model.addAttribute("total_deductions", salaryDetailService.sumYear(date, "deductions"));
         model.addAttribute("details", details);
         model.addAttribute("year", year);
         model.addAttribute("filter_name", "Date ("+year+")");
@@ -54,6 +55,7 @@ public class SalaryDetailController {
     @GetMapping("/filterbyyear")
     public String filterbyyear(Model model, @RequestParam("year") int year) throws Exception {
         try {
+            LocalDate date=  LocalDate.of(year, 1, 1);
             List<SalaryDetail> details = salaryDetailService.findAllByYearGroupByMonth(year);
             List<String> columns = salaryDetailService.getColumns(details);
             double[] total = salaryDetailService.sum(details);
@@ -61,8 +63,8 @@ public class SalaryDetailController {
             model.addAttribute("columns", columns);
             model.addAttribute("details", details);
             model.addAttribute("sum", total);
-            model.addAttribute("total_earnings", salaryDetailService.sum(LocalDate.of(year, 1, 1)), "earnings");
-            model.addAttribute("total_deductions", salaryDetailService.sum(LocalDate.of(year, 1, 1)), "deductions");
+            model.addAttribute("total_earnings", salaryDetailService.sumYear(date, "earnings"));
+            model.addAttribute("total_deductions", salaryDetailService.sumYear(date, "deductions"));
             model.addAttribute("filter_name", "Date ("+year+")");
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,8 +91,8 @@ public class SalaryDetailController {
             List<String> columns = salaryDetailService.getColumns(details);
             double[] total = salaryDetailService.sum(details);
             
-            model.addAttribute("total_earnings", salaryDetailService.sumSalaryComponent(details, "earnings"));
-            model.addAttribute("total_deductions", salaryDetailService.sumSalaryComponent(details, "deductions"));
+            model.addAttribute("total_earnings", salaryDetailService.sumMonth(date, "earnings"));
+            model.addAttribute("total_deductions", salaryDetailService.sumMonth(date, "deductions"));
             model.addAttribute("columns", columns);
             model.addAttribute("details", details);
             model.addAttribute("sum", total);
