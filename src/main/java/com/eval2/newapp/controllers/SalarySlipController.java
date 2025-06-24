@@ -47,9 +47,10 @@ public class SalarySlipController {
     
     @PostMapping("/updateMultiple")
     // public String updateMultiple(RedirectAttributes redirectAttributes, @RequestParam("comp") String comp, @RequestParam("condition") String condition,
-    // @RequestParam("amount") double amount, @RequestParam("start_date") LocalDate start_date, @RequestParam("end_date") LocalDate end_date) throws Exception { 
+    // @RequestParam("amount") double amount, @RequestParam("new_amount") double new_amount, @RequestParam("start_date") LocalDate start_date, @RequestParam("end_date") LocalDate end_date) throws Exception { 
     public String updateMultiple(RedirectAttributes redirectAttributes, @RequestParam("comp") String comp, @RequestParam("condition") String condition,
     @RequestParam("amount") double amount, @RequestParam("new_amount") double new_amount) throws Exception { 
+        // List<SalaryDetailDTO> salaryDTO = salaryDetailService.findAllFilterByComponentCondition(comp, amount, condition, start_date, end_date);
         List<SalaryDetailDTO> salaryDTO = salaryDetailService.findAllFilterByComponentCondition(comp, amount, condition);
         if (salaryDTO.size() != 0) {
             List<SalarySlip> salarySlips = salarySlipService.findSalarySlipFromDetails(salaryDTO);
@@ -90,8 +91,8 @@ public class SalarySlipController {
             else {
                 System.out.println("tsy misy salary assignment");
                 salaryAssignmentService.save(start_date, emp, amount, salaryStructure.getName());
-                int record = salarySlipService.generate(start_date, end_date, emp, amount, salaryStructure);
-                redirectAttributes.addFlashAttribute("success", record+" salary slip generated succesfuly.");
+                int record = salarySlipService.generateWithAssignment(start_date, end_date, emp, amount, salaryStructure);
+                redirectAttributes.addFlashAttribute("success", record+" `Salary Slip` and `Salary Structure Assignment` generated succesfuly.");
             }
         } catch (Exception e) {
             e.printStackTrace();

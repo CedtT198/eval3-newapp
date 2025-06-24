@@ -1,13 +1,11 @@
 package com.eval2.newapp.services;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -98,6 +96,22 @@ public class SalarySlipService {
             System.out.println(empRef);
             System.out.println(amount);
             System.out.println(salaryStructure+"\n");
+            record += save(startDate, empRef, amount, salaryStructure.getName());
+            startDate = startDate.plusMonths(1);
+        }
+        return record; // returned as insertion record.
+    }
+    
+    public int generateWithAssignment(LocalDate startDate, LocalDate endDate, String empRef, Double amount, SalaryStructure salaryStructure)  throws Exception {
+        int record = 0;
+        long monthsBetween = dateService.getMonthBetween(startDate, endDate);
+        System.out.println("Months in between : "+monthsBetween);
+        for (int i = 0; i < monthsBetween; i++) {
+            System.out.println(startDate);
+            System.out.println(empRef);
+            System.out.println(amount);
+            System.out.println(salaryStructure+"\n");
+            salaryAssignmentService.save(startDate, empRef, amount, empRef);
             record += save(startDate, empRef, amount, salaryStructure.getName());
             startDate = startDate.plusMonths(1);
         }
@@ -220,5 +234,4 @@ public class SalarySlipService {
 
         return salarySlips;
     }
-
 }
