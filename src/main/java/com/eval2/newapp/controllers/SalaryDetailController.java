@@ -31,8 +31,8 @@ public class SalaryDetailController {
         model.addAttribute("earnings", salaryDetailService.extractCompTypeAmount(details, "earnings"));
         model.addAttribute("deductions", salaryDetailService.extractCompTypeAmount(details, "deductions"));
         model.addAttribute("total_base", salaryDetailService.sumSalaryBase(details));
-        model.addAttribute("total_earnings", salaryDetailService.sumSalaryComponent(details, "earnings"));
-        model.addAttribute("total_deductions", salaryDetailService.sumSalaryComponent(details, "deductions"));
+        model.addAttribute("total_earnings", salaryDetailService.sum(LocalDate.of(year, 1, 1)), "earnings");
+        model.addAttribute("total_deductions", salaryDetailService.sum(LocalDate.of(year, 1, 1)), "deductions");
         model.addAttribute("details", details);
         model.addAttribute("year", year);
         model.addAttribute("filter_name", "Date ("+year+")");
@@ -61,8 +61,8 @@ public class SalaryDetailController {
             model.addAttribute("columns", columns);
             model.addAttribute("details", details);
             model.addAttribute("sum", total);
-            model.addAttribute("total_earnings", salaryDetailService.sumSalaryComponent(details, "earnings"));
-            model.addAttribute("total_deductions", salaryDetailService.sumSalaryComponent(details, "deductions"));
+            model.addAttribute("total_earnings", salaryDetailService.sum(LocalDate.of(year, 1, 1)), "earnings");
+            model.addAttribute("total_deductions", salaryDetailService.sum(LocalDate.of(year, 1, 1)), "deductions");
             model.addAttribute("filter_name", "Date ("+year+")");
         } catch (Exception e) {
             e.printStackTrace();

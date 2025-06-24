@@ -112,6 +112,7 @@ public class SalaryAssignmentService {
         ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.GET, entity, JsonNode.class);
 
         JsonNode dataNode = response.getBody().get("data");
+        System.out.println("Salary Structure Assignment :\n"+dataNode.toString());
         SalaryAssignment[] rfqs = objectMapper.treeToValue(dataNode, SalaryAssignment[].class);
 
         return Arrays.asList(rfqs);

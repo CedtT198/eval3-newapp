@@ -76,22 +76,41 @@ public class SalaryDetailService {
         return sum;
     }
 
-    public double sumSalaryComponent(List<SalaryDetail> salaryDetails, String componentType) {
-        double sum = 0;
-
-        if (componentType.toLowerCase().equals("earnings")) {
-            for (SalaryDetail salaryDetail : salaryDetails) {
-                sum += salaryDetail.getTotalEarnings();
-            }
-        }
-        else if (componentType.toLowerCase().equals("deductions")) {
-            for (SalaryDetail salaryDetail : salaryDetails) {
-                sum += salaryDetail.getTotalDeductions();
-            }
-        }
     
+    public double sum(LocalDate date, String type) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        String url = "http://erpnext.localhost:8000/api/method/hrms.payroll.doctype.salary_detail.salary_detail.get_sum?type="+type+"&year="+date.getYear();
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<JsonNode> response = restTemplate.postForEntity(url, entity, JsonNode.class);
+
+        System.out.println(response.getBody());
+        JsonNode dataNode = response.getBody().get("message").get("total");
+        double sum = objectMapper.treeToValue(dataNode, Double.class);
+
         return sum;
     }
+
+    // public double sumSalaryComponent(List<SalaryDetail> salaryDetails, String componentType) {
+    //     double sum = 0;
+
+    //     if (componentType.toLowerCase().equals("earnings")) {
+    //         for (SalaryDetail salaryDetail : salaryDetails) {
+    //             sum += salaryDetail.getTotalEarnings();
+    //         }
+    //     }
+    //     else if (componentType.toLowerCase().equals("deductions")) {
+    //         for (SalaryDetail salaryDetail : salaryDetails) {
+    //             sum += salaryDetail.getTotalDeductions();
+    //         }
+    //     }
+    
+    //     return sum;
+    // }
 
     public List<SalaryDetail> findAllByYearGroupByMonth(int year) throws Exception {
         String startDate = LocalDate.of(year, 1, 1).toString();
@@ -147,8 +166,8 @@ public class SalaryDetailService {
             }
             // System.out.println(d.getSalaryAssignment().getBase());
 
-            d.setTotalParentField("earnings");
-            d.setTotalParentField("deductions");
+            // d.setTotalParentField("earnings");
+            // d.setTotalParentField("deductions");
             newSalDetails.add(d);
         }
         return newSalDetails;
@@ -164,10 +183,10 @@ public class SalaryDetailService {
         List<SalaryAssignment> salaryAssignments = salaryAssignmentService.findAllByDate(startDate, endDate);
         
         List<SalaryDetail> salDetails = getSalaryDetailFromAss(salaryAssignments, startDate, endDate);
-        for (SalaryDetail salaryDetail : salDetails) {
-            salaryDetail.setTotalParentField("earnings");
-            salaryDetail.setTotalParentField("deductions");
-        }
+        // for (SalaryDetail salaryDetail : salDetails) {
+        //     salaryDetail.setTotalParentField("earnings");
+        //     salaryDetail.setTotalParentField("deductions");
+        // }
         return salDetails;
     }
 
@@ -240,7 +259,7 @@ public class SalaryDetailService {
             base += d.getSalaryAssignment().getBase();
             
             List<SalaryDetailDTO> salDTO = d.getSalary_details();
-            for (int i=0; i<columns.size(); i++) {
+            for (int i=1; i<columns.size(); i++) {
                 
                 String col = columns.get(i);
                 try {

@@ -152,7 +152,8 @@ public class SalarySlipService {
     }
     
     public List<SalarySlip> findAllByDate(String startDate, String endDate, String emp) throws Exception {
-        String url = "http://erpnext.localhost:8000/api/resource/Salary Slip?fields=[\"*\"]&filters=[[\"posting_date\",\">=\",\"" + startDate + "\"], [\"posting_date\",\"<=\",\"" + endDate + "\"], [\"employee\",\"=\",\"" + emp + "\"]]&limit=500";
+        String url = "http://erpnext.localhost:8000/api/resource/Salary Slip?fields=[\"*\"]&filters=[[\"start_date\",\">=\",\"" + startDate + "\"], [\"start_date\",\"<=\",\"" + endDate + "\"], [\"employee\",\"=\",\"" + emp + "\"]]&limit=500";
+        // String url = "http://erpnext.localhost:8000/api/resource/Salary Slip?fields=[\"*\"]&filters=[[\"posting_date\",\">=\",\"" + startDate + "\"], [\"posting_date\",\"<=\",\"" + endDate + "\"], [\"employee\",\"=\",\"" + emp + "\"]]&limit=500";
         // System.out.println(url);
         
         HttpHeaders headers = new HttpHeaders();
@@ -162,7 +163,7 @@ public class SalarySlipService {
         ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.GET, entity, JsonNode.class);
 
         JsonNode dataNode = response.getBody().get("data");
-        System.out.println(dataNode.toString());
+        System.out.println("Salary Slip :\n"+dataNode.toString());
         SalarySlip[] rfqs = objectMapper.treeToValue(dataNode, SalarySlip[].class);
 
         return Arrays.asList(rfqs);
