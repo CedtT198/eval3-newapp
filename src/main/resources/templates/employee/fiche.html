@@ -1,4 +1,14 @@
-<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Employees / </span>List</h4>
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Employees / List / </span><span th:text="${employee.name}"></span></h4>
+
+<div th:if="${success != null}" class="alert alert-success alert-dismissible" role="alert">
+  <small th:text="${success}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div th:if="${error != null}" class="alert alert-danger alert-dismissible" role="alert">
+  <small th:text="${error}"></small>  
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 
 <div>
     <div class="row">
@@ -71,7 +81,7 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="navs-tabs-salary" role="tabpanel">
-                        <!-- <h4 class="card-header"></h4> -->
+                        <h4 class="card-header">Salary Assignment</h4>
                         <div class="table-responsive text-nowrap">
                             <table class="table table-striped">
                                 <thead>
@@ -79,7 +89,7 @@
                                         <th>Salary Structure</th>
                                         <th>Date</th>
                                         <th>Base Amount</th>
-                                        <th></th>
+                                        <!-- <th></th> -->
                                     </tr>
                                 </thead>
                                 <tbody class="table-border-bottom-0">
@@ -87,13 +97,14 @@
                                         <td th:text="${sal.salary_structure}"></td>
                                         <td th:text="${sal.from_date}"></td>
                                         <td th:text="${sal.base + ' ' + sal.currency}"></td>
-                                        <td>
-                                            <form>
-                                            <!-- <form th:action="${}"> -->                                                
-                                                <!-- <input type="hidden" name="empRef" th:value="${emp.name}"> -->
+                                        <!-- <td>
+                                            <form th:action="@{/salary/slip/insert}" method="post">
+                                                <input type="hidden" name="empRef" th:value="${sal.employee}">
+                                                <input type="hidden" name="salStruct" th:value="${sal.salary_structure}">
+                                                <input type="hidden" name="postingDate" th:value="${sal.from_date}">
                                                 <button class="btn btn-warning" type="submit">Generate Salary Slip</button>
                                             </form>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                 </tbody>
                             </table>

@@ -39,28 +39,35 @@
 
 <div class="card">
   <h4 class="card-header">Employees</h4>
-  <h6 class="card-header">Filter by <span th:text="${filter_name}"></span></h6>
+  <h5 class="card-header">
+    Filter by <span th:text="${filter_name}"></span><br>
+    <small>Records: <span th:text="${employees.size()}"></span></small>
+  </h5>
   <div class="table-responsive text-nowrap">
     <table class="table table-striped" th:if = "${employees.size() != 0}">
       <thead>
         <tr>
-          <th>Full Name</th>
-          <th>Status</th>
-          <th>Designation</th>
           <th>ID</th>
+          <th>Full Name</th>
+          <th>Date of Joining</th>
+          <th>Company</th>
+          <!-- <th>Designation</th> -->
+          <th>Status</th>
           <th></th>
         </tr>
       </thead>
       <tbody class="table-border-bottom-0">
         <tr th:each="emp : ${employees}">
+          <td th:text="${emp.name}"></td>
             <td th:text="${emp.employee_name}"></td>
+            <td th:text="${emp.date_of_joining}"></td>
+            <td th:text="${emp.company}"></td>
+            <!-- <td th:text="${emp.designation}"></td> -->
             <td>
               <span class="badge rounded-pill bg-success" th:text="${emp.status}" th:if="${emp.status == 'Active'}"></span>
               <!-- <span class="badge rounded-pill bg-warning" th:text="${emp.status}" th:if="${emp.status == 'Draft'}"></span>
               <span class="badge rounded-pill bg-danger" th:text="${emp.status}" th:if="${emp.status == 'Cancelled'}"></span> -->
             </td>
-            <td th:text="${emp.designation}"></td>
-            <td th:text="${emp.name}"></td>
             <td>
                 <form th:action="@{/employee/details}" method="get">
                   <input type="hidden" name="empRef" th:value="${emp.name}">

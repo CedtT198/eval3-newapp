@@ -7,39 +7,42 @@
 
 <small class="text-light fw-semibold">Filtrer by : </small>
 <div class="mt-3">
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#date_filter">Date</button> 
-    <div class="modal fade" id="date_filter" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalCenterTitle">Filter</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          
-          <form th:action="@{/salary/detail/filterbydate}" method="get">
-            <div class="modal-body">
-              <div class="row">
-                <div class="col mb-3">
-                  <label for="date" class="form-label">Only the month & year matter</label>
-                  <input type="date" class="form-control" name="date" required>
-                </div>
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#date_filter">Date</button> 
+  <div class="modal fade" id="date_filter" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalCenterTitle">Filter</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <form th:action="@{/salary/detail/filterbymonth}" method="get">
+          <div class="modal-body">
+            <div class="row">
+              <div class="col mb-3">
+                <label for="date" class="form-label">Only the month & year matter</label>
+                <input type="date" class="form-control" name="date" required>
               </div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn btn-primary">Filter</button>
-            </div>
-          </form>
-        </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Filter</button>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
 </div>
-<br><br>
+<br>
 
 <div class="card">
     <h4 class="card-header">Salary Details</h4>
-    <h6 class="card-header">Filter by <span th:text="${filter_name}"></span></h6>
+    <h5 class="card-header">
+      Filter by <span th:text="${filter_name}"></span><br><br>
+      <small>Records: <span th:text="${details.size()}"></span></small>
+    </h5>
     <div class="table-responsive text-nowrap">
         <table class="table table-striped" th:if = "${details.size() != 0}">
             <thead>
@@ -49,31 +52,38 @@
                     <th>Full Name</th>
                     <th>Joining Date</th>
                     <th>Company</th>
-                    <th>Designation</th>
-                    <th>From Date</th>
+                    <!-- <th>Designation</th>
+                    <th>From Date</th> -->
                     <th>Base</th>
                     <th th:each="col : ${columns}" th:text="${col}"></th>
+                    <th>Earnings</th>
+                    <th>Deductions</th>
                 </tr>
             </thead>
             <tbody class="table-border-bottom-0">
                 <!-- Results -->
                 <tr th:each="result: ${details}">
-                    <td th:text="${result.employe.employee}"></td>
-                    <td th:text=" ${result.employe.first_name} + ' ' + ${result.employe.last_name}"></td>
-                    <td th:text="${result.employe.date_of_joining}"></td>
-                    <td th:text="${result.employe.company}"></td>
-                    <td th:text="${result.employe.designation}"></td>
-                    <td th:text="${result.salaryAssignment.from_date}"></td>
-                    <td th:text="${result.salaryAssignment.base}"></td>
-                    <td th:each="detail : ${result.salary_details}" th:text="${detail.amount}"></td>
+                  <td th:text="${result.employe.employee}"></td>
+                  <td th:text=" ${result.employe.employee_name}"></td>
+                  <td th:text="${result.employe.date_of_joining}"></td>
+                  <td th:text="${result.employe.company}"></td>
+                  <!-- <td th:text="${result.employe.designation}"></td> -->
+                  <!-- <td th:text="${result.salaryAssignment.from_date}"></td> -->
+                  <td th:text="${result.salaryAssignment.base}"></td>
+                  <td th:each="detail : ${result.salary_details}" th:text="${detail.amount}"></td>
+                  <td th:text="${result.totalEarnings}"></td>
+                  <td th:text="${result.totalDeductions}"></td>
                 </tr>
                 <!-- Total -->
             </tbody>
             <tfoot>
                 <tr>
                     <th>Total</th>
-                    <th th:each="i : ${#numbers.sequence(0, 4, 1)}"> - </th>
-                    <td th:each="total : ${sum}" th:text="${total}"></td>
+                    <!-- <th th:each="i : ${#numbers.sequence(0, 4, 1)}"> - </th> -->
+                    <th th:each="i : ${#numbers.sequence(0, 2, 1)}"> - </th>
+                    <td th:each="total : ${sum}" th:text="${#numbers.formatDecimal(total, 0, 'DEFAULT', 0, 'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(total_earnings, 0, 'DEFAULT', 0, 'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(total_deductions, 0, 'DEFAULT', 0, 'POINT')}"></td>
                 </tr>
             </tfoot>
         </table>

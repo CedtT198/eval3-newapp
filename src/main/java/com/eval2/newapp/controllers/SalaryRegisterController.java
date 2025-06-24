@@ -19,13 +19,20 @@ public class SalaryRegisterController {
 
     @GetMapping("/filterbydate")
     public String filterbydate(Model model, @RequestParam("begin") LocalDate begin, @RequestParam("end") LocalDate end) throws Exception {
-        try {
-            model.addAttribute("registers", salaryRegisterService.findAllBetweenDate(begin.toString(), end.toString()));
-            model.addAttribute("filter_name", "Date ("+begin.toString()+" to "+end.toString()+")");
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("error", e.getMessage());
+        if (begin.isAfter(end)) {
+            model.addAttribute("registers", salaryRegisterService.findAllBetweenDate("2000-01-01", "2064-01-01"));
+            model.addAttribute("filter_name", "All");
+            model.addAttribute("error", "Start date can\'t be after End date");
         }
+        else {
+            try {
+                model.addAttribute("registers", salaryRegisterService.findAllBetweenDate(begin.toString(), end.toString()));
+                model.addAttribute("filter_name", "Date ("+begin.toString()+" to "+end.toString()+")");
+            } catch (Exception e) {
+                e.printStackTrace();
+                model.addAttribute("error", e.getMessage());
+            }
+        }        
         model.addAttribute("body", "salary/register/list");
         return "layout";
     }

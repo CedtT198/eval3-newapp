@@ -3,15 +3,19 @@ package com.eval2.newapp.services;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.eval2.newapp.models.SalaryAssignment;
+import com.eval2.newapp.models.SalaryStructure;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,13 +27,53 @@ public class SalaryAssignmentService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public List<SalaryAssignment> findAllByDate(LocalDate date) throws Exception {
-        YearMonth yearMonth = YearMonth.from(date);
-        LocalDate lastDayOfMonth = yearMonth.atEndOfMonth();
+    public void save(LocalDate startDate, String empRef, double amount, SalaryStructure salaryStructure) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
 
-        String startDate = date.withDayOfMonth(1).toString();
-        String endDate = lastDayOfMonth.toString();
-        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"from_date\",\">=\",\"" + startDate + "\"], [\"from_date\",\"<=\",\"" + endDate + "\"]]";
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        String url = "http://erpnext.localhost:8000/api/method/hrms.payroll.doctype.salary_structure_assignment.salary_structure_assignment.create_salary_assignment?employee_ref="+empRef+"&from_date="+startDate.toString()+"&base="+amount+"&salary_structure="+salaryStructure.getName();
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+
+        System.out.println(response.getBody());
+    }
+
+    public List<SalaryAssignment> findLastBefore(String date, String empRef) throws Exception {
+        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"from_date\",\"<=\",\""+date+"\"], [\"employee\",\"=\",\""+empRef+"\"]]&order_by=from_date desc&limit=1";
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.GET, entity, JsonNode.class);
+
+        JsonNode dataNode = response.getBody().get("data");
+        SalaryAssignment[] rfqs = objectMapper.treeToValue(dataNode, SalaryAssignment[].class);
+
+        return Arrays.asList(rfqs);
+    }
+    
+    public List<SalaryAssignment> findLastBefore(String date) throws Exception {
+        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"from_date\"]&filters=[[\"from_date\",\"<=\",\""+date+"\"]]&order_by=from_date desc&limit=1";
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.GET, entity, JsonNode.class);
+
+        JsonNode dataNode = response.getBody().get("data");
+        SalaryAssignment[] rfqs = objectMapper.treeToValue(dataNode, SalaryAssignment[].class);
+
+        return Arrays.asList(rfqs);
+    }
+
+
+    public List<SalaryAssignment> findAllByDate(String startDate, String endDate) throws Exception {
+        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"from_date\",\">=\",\"" + startDate + "\"], [\"from_date\",\"<=\",\"" + endDate + "\"]]&limit=500";
         
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
@@ -49,7 +93,7 @@ public class SalaryAssignmentService {
 
         String startDate = date.withDayOfMonth(1).toString();
         String endDate = lastDayOfMonth.toString();
-        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"employee\",\"=\",\"" + empRef + "\"], [\"docstatus\",\"=\",\"1\"], [\"from_date\",\">=\",\"" + startDate + "\"], [\"from_date\",\"<=\",\"" + endDate + "\"]]";
+        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"employee\",\"=\",\"" + empRef + "\"], [\"docstatus\",\"=\",\"1\"], [\"from_date\",\">=\",\"" + startDate + "\"], [\"from_date\",\"<=\",\"" + endDate + "\"]]&limit=500";
         
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
@@ -67,7 +111,7 @@ public class SalaryAssignmentService {
         // All
         // String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"employee\",\"=\",\"" + empRef + "\"], [\"docstatus\",\"=\",\"1\"]]"; 
         // Par mois
-        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"employee\",\"=\",\"" + empRef + "\"], [\"docstatus\",\"=\",\"1\"]]";
+        String url = "http://erpnext.localhost:8000/api/resource/Salary Structure Assignment?fields=[\"*\"]&filters=[[\"employee\",\"=\",\"" + empRef + "\"], [\"docstatus\",\"=\",\"1\"]]&limit=500";
         
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "token "+ApiKeyService.getAPiKey());

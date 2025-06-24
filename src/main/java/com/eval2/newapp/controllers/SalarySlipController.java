@@ -1,14 +1,26 @@
 package com.eval2.newapp.controllers;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.eval2.newapp.models.Employe;
+import com.eval2.newapp.models.SalaryAssignment;
+import com.eval2.newapp.models.SalarySlip;
+import com.eval2.newapp.models.SalaryStructure;
+import com.eval2.newapp.services.EmployeService;
 import com.eval2.newapp.services.ExportService;
+import com.eval2.newapp.services.SalaryAssignmentService;
 import com.eval2.newapp.services.SalarySlipService;
+import com.eval2.newapp.services.SalaryStructureService;
+
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
@@ -18,8 +30,88 @@ public class SalarySlipController {
     @Autowired
     SalarySlipService salarySlipService;
     @Autowired
+    EmployeService employeService;
+    @Autowired
     ExportService exportService;
+    @Autowired
+    SalaryAssignmentService salaryAssignmentService;
+    @Autowired
+    SalaryStructureService salaryStructureService;
     
+    @GetMapping("/generate")
+    public String filterToUpdate(Model model) throws Exception { 
+        model.addAttribute("employees", employeService.findAll());
+        model.addAttribute("body", "salary/slip/generate");
+        return "layout";
+    }
+
+    @PostMapping("/generateMultiple")
+    public String generateMultiple(RedirectAttributes redirectAttributes, @RequestParam("start_date") LocalDate start_date, @RequestParam("end_date") LocalDate end_date,
+    @RequestParam("emp") String emp, @RequestParam("amount") Double amount) throws Exception { 
+        try {
+            List<SalaryAssignment> assignment = salaryAssignmentService.findLastBefore(start_date.toString(), emp);
+            System.out.println(assignment.toString());
+            SalaryStructure salaryStructure = salaryStructureService.findAll().get(0); 
+            System.out.println(salaryStructure.getName());
+            if (assignment.size() != 0) {   
+                if (amount == null || amount <= 0) {
+                    redirectAttributes.addFlashAttribute("error", "Please enter a valid new amount != null and != 0.");
+                }
+                else {
+                    System.out.println("Misy salary assignment");
+                    int record = salarySlipService.generate(start_date, end_date, emp, assignment.get(0).getBase(), salaryStructure);
+                    redirectAttributes.addFlashAttribute("success", record+" salary slip generated succesfuly.");
+                }
+            }
+            else {
+                System.out.println("tsy misy salary assignment");
+                salaryAssignmentService.save(start_date, emp, amount, salaryStructure);
+                int record = salarySlipService.generate(start_date, end_date, emp, amount, salaryStructure);
+                redirectAttributes.addFlashAttribute("success", record+" salary slip generated succesfuly.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/salary/slip/generate";
+    }
+
+    @GetMapping("/generate")
+    public String generate(Model model) throws Exception { 
+        model.addAttribute("employees", employeService.findAll());
+        model.addAttribute("body", "salary/slip/generate");
+        return "layout";
+    }
+    
+    @PostMapping("/insert")
+    public String insert(RedirectAttributes redirectAttributes, @RequestParam("empRef") String empRef, @RequestParam("salStruct") String salStruct, @RequestParam("postingDate") LocalDate postingDate) {
+        try {
+            Employe emp = employeService.findByEmployeeRef(empRef);
+            
+            postingDate = postingDate.plusDays(1);
+
+            SalarySlip salarySlip = new SalarySlip();
+            salarySlip.setEmployee(emp.getEmployee());
+            // salarySlip.setEmployee_name(emp.getEmployee_name());
+            // salarySlip.setCompany(emp.getCompany());
+            // salarySlip.setCurrency(emp.getSalary_currency());
+            salarySlip.setPosting_date(postingDate);
+            salarySlip.setPayroll_frequency("Monthly"); 
+            salarySlip.setSalary_structure(salStruct);
+            salarySlip.setStart_date(postingDate);
+            salarySlip.setEnd_date(postingDate.plusMonths(1));
+            salarySlip.setExchange_rate(1);
+            salarySlip.setDocstatus(1);
+
+            redirectAttributes.addFlashAttribute("salaries", salarySlipService.save(salarySlip));
+            redirectAttributes.addFlashAttribute("success", "Salary Slip inserted successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/employee/details?empRef="+empRef;
+    }
+
     @GetMapping("/exportPDF")
     public String exportPDF(RedirectAttributes redirectAttributes, @RequestParam("salRef") String salRef, HttpServletResponse response) throws Exception {
         try {
@@ -33,7 +125,7 @@ public class SalarySlipController {
     }
 
     @GetMapping("/list")
-    public String list(Model model) throws Exception {
+    public String list(Model model) throws Exception { 
         model.addAttribute("salaries", salarySlipService.findAll());
         model.addAttribute("body", "salary/slip/list");
         return "layout";
