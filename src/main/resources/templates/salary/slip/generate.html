@@ -15,7 +15,7 @@
         <h4 class="card-header">Form</h4>
     </div>
     <div class="container mb-4">
-        <form th:action="@{/salary/slip/generateMultiple}" method="post">
+        <form th:action="@{/salary/slip/generateMultipleWithOption}" method="post">
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <div class="form-floating mb-4">
@@ -25,6 +25,18 @@
                     <div class="form-floating mb-4">
                         <input type="date" class="form-control" id="end_date" name="end_date">
                         <label for="end_date">End Date</label>
+                    </div>
+                    <div class="input-group mb-4 row">
+                        <div class="col-md-12 mb-1">Replace existing salary</div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-11">
+                            <label>
+                                <input type="radio" name="ecrase" value="oui" required> Oui
+                            </label>
+                            <label>
+                                <input type="radio" name="ecrase" value="non" required> Non
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6 mb-4">
@@ -39,6 +51,18 @@
                     <div class="form-floating mb-4">
                         <input type="number" class="form-control" id="amount" name="amount" placeholder="New Amount" required>
                         <label for="amount">Amount</label>
+                    </div>
+                    <div class="input-group mb-4 row">
+                        <div class="col-md-12 mb-1">Calculate from all average salary before</div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-11">
+                            <label>
+                                <input type="radio" name="avg" value="oui" required> Oui
+                            </label>
+                            <label>
+                                <input type="radio" name="avg" value="non" required> Non
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-9"></div>

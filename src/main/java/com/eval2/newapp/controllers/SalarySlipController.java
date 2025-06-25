@@ -1,6 +1,7 @@
 package com.eval2.newapp.controllers;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,32 @@ public class SalarySlipController {
     @Autowired
     SalaryDetailService salaryDetailService;
     
+    @PostMapping("/filtreremp")
+    public String filtreremp(Model model, @RequestParam("comp") String comp, @RequestParam("condition") String condition, @RequestParam("amount") double amount) throws Exception { 
+        List<SalaryDetailDTO> salaryDTO = salaryDetailService.findAllFilterByComponentCondition(comp, amount, condition);
+        List<SalarySlip> salarySlips = new ArrayList<>();
+        if (salaryDTO.size() != 0) {
+            salarySlips = salarySlipService.findSalarySlipFromDetails(salaryDTO);
+            model.addAttribute("success", "Filtered successfuly.");
+        }
+        else {
+            model.addAttribute("warning", "No employee(s) with <strong>`Salary Slip`</strong> found within <strong>`Salary Component`='"+comp+"' "+condition+" "+amount+"</strong>.");    
+        }
+        System.out.println("\nFINAL SALARY SLIPS"+salarySlips+"\n");
+        model.addAttribute("components", salaryComponentsService.findAll());
+        model.addAttribute("slips", salarySlips);
+        model.addAttribute("body", "salary/slip/search");
+        return "layout";
+    }
+
+    @GetMapping("/search")
+    public String search(Model model) throws Exception { 
+        model.addAttribute("components", salaryComponentsService.findAll());
+        model.addAttribute("slips", new ArrayList<>());
+        model.addAttribute("body", "salary/slip/search");
+        return "layout";
+    }
+    
     @PostMapping("/updateMultiple")
     // public String updateMultiple(RedirectAttributes redirectAttributes, @RequestParam("comp") String comp, @RequestParam("condition") String condition,
     // @RequestParam("amount") double amount, @RequestParam("new_amount") double new_amount, @RequestParam("start_date") LocalDate start_date, @RequestParam("end_date") LocalDate end_date) throws Exception { 
@@ -69,6 +96,90 @@ public class SalarySlipController {
         model.addAttribute("body", "salary/slip/update_multiple");
         return "layout";
     }
+
+    @PostMapping("/generateMultipleWithOption")
+    public String generateMultiple(RedirectAttributes redirectAttributes, @RequestParam("start_date") LocalDate start_date, @RequestParam("end_date") LocalDate end_date,
+    @RequestParam("emp") String emp, @RequestParam("amount") Double amount, @RequestParam("ecrase") String ecrase, @RequestParam("avg") String avg) throws Exception { 
+        System.out.println("ecraser ="+ecrase);
+        System.out.println("avg = "+avg);
+        try {
+            List<SalaryAssignment> assignment = salaryAssignmentService.findLastBefore(start_date.toString(), emp);
+            System.out.println(assignment.toString());
+            SalaryStructure salaryStructure = salaryStructureService.findAll().get(0); 
+            System.out.println(salaryStructure.getName());
+            if (assignment.size() != 0) {   
+                if (amount == null || amount <= 0) {
+                    redirectAttributes.addFlashAttribute("error", "Please enter a valid new amount != null and != 0.");
+                }
+                else {
+                    System.out.println("Misy salary assignment");
+
+                    Double salary = assignment.get(0).getBase();
+                    if (avg.equals("oui")) {
+                        System.out.println("Mampiasa moyenne");
+                        if (salaryAssignmentService.getAvgBefore(start_date) != null) {
+                            salary = salaryAssignmentService.getAvgBefore(start_date);
+                        }
+                    }
+                    
+                    int record = salarySlipService.generateWithAssignment(start_date, end_date, emp, salary, salaryStructure, ecrase);
+                    // int record = salarySlipService.generate(start_date, end_date, emp, assignment.get(0).getBase(), salaryStructure, ecrase);
+                    redirectAttributes.addFlashAttribute("success", record+" salary slip generated succesfuly.");
+                }
+            }
+            else {
+                System.out.println("tsy misy salary assignment");
+
+                double salary = amount;
+                if (avg.equals("oui")) {
+                    System.out.println("Mampiasa moyenne");
+                    if (salaryAssignmentService.getAvgBefore(start_date) != null) {
+                        salary = salaryAssignmentService.getAvgBefore(start_date);
+                    }
+                }
+                // salaryAssignmentService.save(start_date, emp, amount, salaryStructure.getName());
+                int record = salarySlipService.generateWithAssignment(start_date, end_date, emp, amount, salaryStructure, ecrase);
+                redirectAttributes.addFlashAttribute("success", record+" <strong>`Salary Slip`</strong> and <strong>`Salary Structure Assignment`<strong/> generated succesfuly.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/salary/slip/generate";
+    }
+    
+    // @PostMapping("/generateMultipleWithOption")
+    // public String generateMultiple(RedirectAttributes redirectAttributes, @RequestParam("start_date") LocalDate start_date, @RequestParam("end_date") LocalDate end_date,
+    // @RequestParam("emp") String emp, @RequestParam("amount") Double amount, @RequestParam("ecrase") String ecrase) throws Exception { 
+    //     System.out.println(ecrase);
+    //     try {
+    //         List<SalaryAssignment> assignment = salaryAssignmentService.findLastBefore(start_date.toString(), emp);
+    //         System.out.println(assignment.toString());
+    //         SalaryStructure salaryStructure = salaryStructureService.findAll().get(0); 
+    //         System.out.println(salaryStructure.getName());
+    //         if (assignment.size() != 0) {   
+    //             if (amount == null || amount <= 0) {
+    //                 redirectAttributes.addFlashAttribute("error", "Please enter a valid new amount != null and != 0.");
+    //             }
+    //             else {
+    //                 System.out.println("Misy salary assignment");
+    //                 int record = salarySlipService.generateWithAssignment(start_date, end_date, emp, assignment.get(0).getBase(), salaryStructure, ecrase);
+    //                 // int record = salarySlipService.generate(start_date, end_date, emp, assignment.get(0).getBase(), salaryStructure, ecrase);
+    //                 redirectAttributes.addFlashAttribute("success", record+" salary slip generated succesfuly.");
+    //             }
+    //         }
+    //         else {
+    //             System.out.println("tsy misy salary assignment");
+    //             // salaryAssignmentService.save(start_date, emp, amount, salaryStructure.getName());
+    //             int record = salarySlipService.generateWithAssignment(start_date, end_date, emp, amount, salaryStructure, ecrase);
+    //             redirectAttributes.addFlashAttribute("success", record+" <strong>`Salary Slip`</strong> and <strong>`Salary Structure Assignment`<strong/> generated succesfuly.");
+    //         }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         redirectAttributes.addFlashAttribute("error", e.getMessage());
+    //     }
+    //     return "redirect:/salary/slip/generate";
+    // }
 
     @PostMapping("/generateMultiple")
     public String generateMultiple(RedirectAttributes redirectAttributes, @RequestParam("start_date") LocalDate start_date, @RequestParam("end_date") LocalDate end_date,

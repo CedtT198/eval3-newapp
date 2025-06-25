@@ -118,6 +118,38 @@ public class SalarySlipService {
         return record; // returned as insertion record.
     }
 
+    public int generateWithAssignment(LocalDate startDate, LocalDate endDate, String empRef, Double amount, SalaryStructure salaryStructure, String ecrase)  throws Exception {
+        int record = 0;
+        long monthsBetween = dateService.getMonthBetween(startDate, endDate);
+        System.out.println("Months in between : "+monthsBetween);
+        for (int i = 0; i < monthsBetween; i++) {
+            System.out.println(startDate);
+            System.out.println(empRef);
+            System.out.println(amount+"\n");
+            salaryAssignmentService.save(startDate, empRef, amount, salaryStructure.getName(), ecrase);
+            record += save(startDate, empRef, amount, salaryStructure.getName(), ecrase);
+            startDate = startDate.plusMonths(1);
+        }
+        return record; // returned as insertion record.
+    }
+
+    public int save(LocalDate date, String empRef, double amount, String salaryStructure, String ecrase) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        String url = "http://erpnext.localhost:8000/api/method/hrms.payroll.doctype.salary_slip.salary_slip.create_salary_slip?employee_ref="+empRef+"&salary_structure="+salaryStructure+"&start_date="+date+"&base="+amount+"&ecrase="+ecrase;
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<JsonNode> response = restTemplate.postForEntity(url, entity, JsonNode.class);
+
+        System.out.println(response.getBody());
+        JsonNode dataNode = response.getBody().get("message");
+        int message = objectMapper.treeToValue(dataNode, Integer.class);
+        return message;
+    }
+
     public int save(LocalDate date, String empRef, double amount, String salaryStructure) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
