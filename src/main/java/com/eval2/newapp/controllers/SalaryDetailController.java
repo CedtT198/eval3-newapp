@@ -29,6 +29,10 @@ public class SalaryDetailController {
         model.addAttribute("currency", "EUR");
         model.addAttribute("months", months);
         model.addAttribute("bases", salaryDetailService.exctractBase(details));
+        
+        System.out.println("EARNINGS From CONTROLLER"+salaryDetailService.sumYear(date, "earnings"));
+        System.out.println("DEDUCTIONS From CONTROLLER"+salaryDetailService.sumYear(date, "deductions"));
+
         model.addAttribute("earnings", salaryDetailService.extractCompTypeAmount(date, "earnings"));
         model.addAttribute("deductions", salaryDetailService.extractCompTypeAmount(date, "deductions"));
         model.addAttribute("total_base", salaryDetailService.sumSalaryBase(details));
@@ -60,6 +64,9 @@ public class SalaryDetailController {
             List<String> columns = salaryDetailService.getColumns(details);
             double[] total = salaryDetailService.sum(details);
             
+            System.out.println("EARNINGS From CONTROLLER"+salaryDetailService.sumYear(date, "earnings"));
+            System.out.println("DEDUCTIONS From CONTROLLER"+salaryDetailService.sumYear(date, "deductions"));
+
             model.addAttribute("columns", columns);
             model.addAttribute("details", details);
             model.addAttribute("sum", total);

@@ -78,6 +78,8 @@ public class SalaryDetailService {
 
     
     public double sumYear(LocalDate date, String type) throws Exception {
+        System.out.println("\n"+date);
+        System.out.println(type+"\n");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
@@ -92,16 +94,20 @@ public class SalaryDetailService {
         JsonNode dataNode = response.getBody().get("message").get(0).get("total");
         // System.out.println("Data node = "+dataNode);
 
-        double sum = 0;
-        if (dataNode.equals(null)) {
-            // System.out.println("ataony");
-            sum = objectMapper.treeToValue(dataNode, Double.class);
-        }
+        // double sum = 0;
+        // if (dataNode.equals(null)) {
+        //     // System.out.println("ataony");
+        //     sum = objectMapper.treeToValue(dataNode, Double.class);
+        // }
 
+        // return sum;
+        double sum = objectMapper.treeToValue(dataNode, Double.class);
         return sum;
     }
     
     public double sumMonth(LocalDate date, String type) throws Exception {
+        System.out.println("\n"+date);
+        System.out.println(type+"\n");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
@@ -115,11 +121,7 @@ public class SalaryDetailService {
         System.out.println(response.getBody());
         JsonNode dataNode = response.getBody().get("message").get(0).get("total");
 
-        double sum = 0;
-        if (dataNode.equals(null)) {
-            sum = objectMapper.treeToValue(dataNode, Double.class);
-        }
-
+        double sum = objectMapper.treeToValue(dataNode, Double.class);
         return sum;
     }
 

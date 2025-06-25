@@ -30,9 +30,15 @@ public class SalaryAssignmentService {
         for (SalaryAssignment salaryAssignment : salaryAssignments) {
             
             if (choice.equals("add")) {
+                System.out.println("\n"+salaryAssignment.getBase());
+                System.out.println(amount);
+                System.out.println("Add\n");
                 amount = amount + salaryAssignment.getBase() * value / 100;
             }
             else if (choice.equals("reduce")) {
+                System.out.println("\n"+salaryAssignment.getBase());
+                System.out.println(amount);
+                System.out.println("Reduce\n");
                 amount = amount - salaryAssignment.getBase() * value / 100;
             }
 
