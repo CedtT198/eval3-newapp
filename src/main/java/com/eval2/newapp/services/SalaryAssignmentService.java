@@ -26,8 +26,16 @@ public class SalaryAssignmentService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public int updateMultipleSalaryAssignment(List<SalaryAssignment> salaryAssignments, double amount) throws Exception{
+    public int updateMultipleSalaryAssignment(List<SalaryAssignment> salaryAssignments, double amount, String choice, double value) throws Exception{
         for (SalaryAssignment salaryAssignment : salaryAssignments) {
+            
+            if (choice.equals("add")) {
+                amount = amount + salaryAssignment.getBase() * value / 100;
+            }
+            else if (choice.equals("reduce")) {
+                amount = amount - salaryAssignment.getBase() * value / 100;
+            }
+
             update(salaryAssignment, amount);
             System.out.println(salaryAssignment.getName());
         }

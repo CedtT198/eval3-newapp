@@ -49,12 +49,12 @@ public class SalarySlipController {
     // public String updateMultiple(RedirectAttributes redirectAttributes, @RequestParam("comp") String comp, @RequestParam("condition") String condition,
     // @RequestParam("amount") double amount, @RequestParam("new_amount") double new_amount, @RequestParam("start_date") LocalDate start_date, @RequestParam("end_date") LocalDate end_date) throws Exception { 
     public String updateMultiple(RedirectAttributes redirectAttributes, @RequestParam("comp") String comp, @RequestParam("condition") String condition,
-    @RequestParam("amount") double amount, @RequestParam("new_amount") double new_amount) throws Exception { 
+    @RequestParam("amount") double amount, @RequestParam("new_amount") double new_amount, @RequestParam("choice") String choice, @RequestParam("value") double value) throws Exception { 
         // List<SalaryDetailDTO> salaryDTO = salaryDetailService.findAllFilterByComponentCondition(comp, amount, condition, start_date, end_date);
         List<SalaryDetailDTO> salaryDTO = salaryDetailService.findAllFilterByComponentCondition(comp, amount, condition);
         if (salaryDTO.size() != 0) {
             List<SalarySlip> salarySlips = salarySlipService.findSalarySlipFromDetails(salaryDTO);
-            int[] record = salarySlipService.updateSalary(salarySlips, new_amount);
+            int[] record = salarySlipService.updateSalary(salarySlips, new_amount, choice, value);
             redirectAttributes.addFlashAttribute("success", record[0]+" <strong>`Salary Structure Assignment`</strong> successfuly updated.<br>"+record[1]+" <strong>`Salary Slip`</strong> successfuly updated.");
         }
         else {

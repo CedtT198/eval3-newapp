@@ -33,7 +33,7 @@ public class SalarySlipService {
     @Autowired
     private SalaryAssignmentService salaryAssignmentService;
     
-    public int[] updateSalary(List<SalarySlip> salarySlips, double amount) throws Exception {
+    public int[] updateSalary(List<SalarySlip> salarySlips, double amount, String choice, double value) throws Exception {
         List<SalaryAssignment> salaryAssignments = new ArrayList<>();
 
         // take distinctly all salary structure assignment
@@ -50,7 +50,8 @@ public class SalarySlipService {
 
             if (!exist) salaryAssignments.add(salaryAssignment);
         }
-        int assignment_record = salaryAssignmentService.updateMultipleSalaryAssignment(salaryAssignments, amount);
+
+        int assignment_record = salaryAssignmentService.updateMultipleSalaryAssignment(salaryAssignments, amount, choice, value);
         int slip_record = updateMultipleSalarySlip(salarySlips, amount);
         
         int[] records = new int[]{assignment_record, slip_record};
