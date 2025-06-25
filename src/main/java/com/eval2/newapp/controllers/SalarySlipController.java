@@ -108,6 +108,7 @@ public class SalarySlipController {
             SalaryStructure salaryStructure = salaryStructureService.findAll().get(0); 
             System.out.println(salaryStructure.getName());
             if (assignment.size() != 0) {   
+                // tokony tsy miretourne erreur direct fa na tsy mampiditra azy le olona, le moyenne afaka raisina foana
                 if (amount == null || amount <= 0) {
                     redirectAttributes.addFlashAttribute("error", "Please enter a valid new amount != null and != 0.");
                 }

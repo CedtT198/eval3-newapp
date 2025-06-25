@@ -70,9 +70,12 @@
                 <tr>
                     <th>Employee ref</th>
                     <th>Employee Name</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
+                    <th>Salary Slip</th>
+                    <th>Date</th>
+                    <!-- <th>Start Date</th>
+                    <th>End Date</th> -->
                     <th>Net Pay</th>
+                    <th>Total Earnings</th>
                     <th>Total Deductions</th>
                 </tr>
             </thead>
@@ -80,9 +83,12 @@
                 <tr th:each="slip: ${slips}">
                     <td th:text="${slip.employee}"></td>
                     <td th:text="${slip.employee_name}"></td>
+                    <td th:text="${slip.name}"></td>
                     <td th:text="${slip.start_date}"></td>
-                    <td th:text="${slip.end_date}"></td>
+                    <!-- <td th:text="${slip.start_date}"></td>
+                    <td th:text="${slip.end_date}"></td> -->
                     <td th:text="${slip.net_pay}"></td>
+                    <td th:text="${slip.gross_pay}"></td>
                     <td th:text="${slip.total_deduction}"></td>
                 </tr>
             </tbody>
