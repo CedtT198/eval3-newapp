@@ -8,25 +8,25 @@ public class SalaryDetail {
     SalaryAssignment salaryAssignment;
     List<SalaryDetailDTO> salary_details;
     List<String> columns;
-    double totalEarnings;
-    double totalDeductions;
+    // double totalEarnings;
+    // double totalDeductions;
     
     public SalaryDetail() {
         this.salaryAssignment= new SalaryAssignment();
     }
 
-    public double getTotalEarnings() {
-        return totalEarnings;
-    }
-    public void setTotalEarnings(double totalEarnings) {
-        this.totalEarnings = totalEarnings;
-    }
-    public double getTotalDeductions() {
-        return totalDeductions;
-    }
-    public void setTotalDeductions(double totalDeductions) {
-        this.totalDeductions = totalDeductions;
-    }
+    // public double getTotalEarnings() {
+    //     return totalEarnings;
+    // }
+    // public void setTotalEarnings(double totalEarnings) {
+    //     this.totalEarnings = totalEarnings;
+    // }
+    // public double getTotalDeductions() {
+    //     return totalDeductions;
+    // }
+    // public void setTotalDeductions(double totalDeductions) {
+    //     this.totalDeductions = totalDeductions;
+    // }
     public Employe getEmploye() {
         return employe;
     }
@@ -56,18 +56,18 @@ public class SalaryDetail {
         this.columns = columns;
     }    
 
-    public void setTotalParentField(String field) {
-        double total = 0;
-        String fieldLower = field.toLowerCase();
-        for (SalaryDetailDTO sal : this.getSalary_details()) {
-            if (sal.getParentfield().toLowerCase().equals(fieldLower)) {
-                total += sal.getAmount();
-            }
-        }
+    // public void setTotalParentField(String field) {
+    //     double total = 0;
+    //     String fieldLower = field.toLowerCase();
+    //     for (SalaryDetailDTO sal : this.getSalary_details()) {
+    //         if (sal.getParentfield().toLowerCase().equals(fieldLower)) {
+    //             total += sal.getAmount();
+    //         }
+    //     }
 
-        if (fieldLower.equals("earnings")) this.totalEarnings = total;
-        else if (fieldLower.equals("deductions")) this.totalDeductions = total;
-    }
+    //     if (fieldLower.equals("earnings")) this.totalEarnings = total;
+    //     else if (fieldLower.equals("deductions")) this.totalDeductions = total;
+    // }
 
     public void setColumns() {
         List<String> columns = new ArrayList<>();

@@ -1,12 +1,12 @@
 <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Salary / Slip </span>/ Multiple Generation</h4>
 
 <div th:if="${error != null}" class="alert alert-danger alert-dismissible" role="alert">
-  <small th:text="${error}"></small>  
+  <small th:utext="${error}"></small>  
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
 <div th:if="${success != null}" class="alert alert-success alert-dismissible" role="alert">
-  <small th:text="${success}"></small>  
+  <small th:utext="${success}"></small>  
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
@@ -15,7 +15,7 @@
         <h4 class="card-header">Form</h4>
     </div>
     <div class="container mb-4">
-        <form th:action="@{/salary/slip/generateMultiple}" method="post">
+        <form th:action="@{/salary/slip/generateMultipleWithOption}" method="post">
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <div class="form-floating mb-4">
@@ -25,6 +25,18 @@
                     <div class="form-floating mb-4">
                         <input type="date" class="form-control" id="end_date" name="end_date">
                         <label for="end_date">End Date</label>
+                    </div>
+                    <div class="input-group mb-4 row">
+                        <div class="col-md-12 mb-1">Replace existing salary ?</div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-11">
+                            <label>
+                                <input type="radio" name="ecrase" value="oui" required> Yes
+                            </label>
+                            <label>
+                                <input type="radio" name="ecrase" value="non" required> No
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6 mb-4">
@@ -39,6 +51,18 @@
                     <div class="form-floating mb-4">
                         <input type="number" class="form-control" id="amount" name="amount" placeholder="New Amount" required>
                         <label for="amount">Amount</label>
+                    </div>
+                    <div class="input-group mb-4 row">
+                        <div class="col-md-12 mb-1">Calculate from all average salary before ?</div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-11">
+                            <label>
+                                <input type="radio" name="avg" value="oui" required> Yes
+                            </label>
+                            <label>
+                                <input type="radio" name="avg" value="non" required> No
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-9"></div>

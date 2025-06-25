@@ -26,8 +26,46 @@ public class SalaryAssignmentService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public int updateMultipleSalaryAssignment(List<SalaryAssignment> salaryAssignments, double amount) throws Exception{
+    public Double getAvgBefore(LocalDate date) throws Exception {
+        System.out.println("\n"+date+"\n");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        String url = "http://erpnext.localhost:8000/api/method/hrms.payroll.doctype.salary_structure_assignment.salary_structure_assignment.get_avg_salary_before?date="+date;
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<JsonNode> response = restTemplate.postForEntity(url, entity, JsonNode.class);
+
+        System.out.println(response.getBody());
+        Double sum = null;
+        try {
+            JsonNode dataNode = response.getBody().get("message").get(0).get("avg");
+            sum = objectMapper.treeToValue(dataNode, Double.class);
+        } catch (Exception e) {
+            System.out.println("catcher");
+            return sum;
+        }
+        return sum;
+    }
+
+    public int updateMultipleSalaryAssignment(List<SalaryAssignment> salaryAssignments, double amount, String choice, double value) throws Exception{
         for (SalaryAssignment salaryAssignment : salaryAssignments) {
+            
+            if (choice.equals("add")) {
+                System.out.println("\n"+salaryAssignment.getBase());
+                System.out.println(amount);
+                System.out.println("Add\n");
+                amount = amount + salaryAssignment.getBase() * value / 100;
+            }
+            else if (choice.equals("reduce")) {
+                System.out.println("\n"+salaryAssignment.getBase());
+                System.out.println(amount);
+                System.out.println("Reduce\n");
+                amount = amount - salaryAssignment.getBase() * value / 100;
+            }
+
             update(salaryAssignment, amount);
             System.out.println(salaryAssignment.getName());
         }
@@ -56,6 +94,20 @@ public class SalaryAssignmentService {
         
         System.out.println(response.getBody());
     }   
+
+    public void save(LocalDate startDate, String empRef, double amount, String salaryStructure, String ecrase) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        String url = "http://erpnext.localhost:8000/api/method/hrms.payroll.doctype.salary_structure_assignment.salary_structure_assignment.create_salary_assignment?employee_ref="+empRef+"&from_date="+startDate.toString()+"&base="+amount+"&salary_structure="+salaryStructure+"&ecrase="+ecrase;
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+
+        System.out.println(response.getBody());
+    }
 
     public void save(LocalDate startDate, String empRef, double amount, String salaryStructure) throws Exception {
         HttpHeaders headers = new HttpHeaders();
@@ -112,6 +164,7 @@ public class SalaryAssignmentService {
         ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.GET, entity, JsonNode.class);
 
         JsonNode dataNode = response.getBody().get("data");
+        System.out.println("Salary Structure Assignment :\n"+dataNode.toString());
         SalaryAssignment[] rfqs = objectMapper.treeToValue(dataNode, SalaryAssignment[].class);
 
         return Arrays.asList(rfqs);

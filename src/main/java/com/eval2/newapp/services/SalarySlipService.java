@@ -33,7 +33,7 @@ public class SalarySlipService {
     @Autowired
     private SalaryAssignmentService salaryAssignmentService;
     
-    public int[] updateSalary(List<SalarySlip> salarySlips, double amount) throws Exception {
+    public int[] updateSalary(List<SalarySlip> salarySlips, double amount, String choice, double value) throws Exception {
         List<SalaryAssignment> salaryAssignments = new ArrayList<>();
 
         // take distinctly all salary structure assignment
@@ -50,7 +50,8 @@ public class SalarySlipService {
 
             if (!exist) salaryAssignments.add(salaryAssignment);
         }
-        int assignment_record = salaryAssignmentService.updateMultipleSalaryAssignment(salaryAssignments, amount);
+
+        int assignment_record = salaryAssignmentService.updateMultipleSalaryAssignment(salaryAssignments, amount, choice, value);
         int slip_record = updateMultipleSalarySlip(salarySlips, amount);
         
         int[] records = new int[]{assignment_record, slip_record};
@@ -109,13 +110,44 @@ public class SalarySlipService {
         for (int i = 0; i < monthsBetween; i++) {
             System.out.println(startDate);
             System.out.println(empRef);
-            System.out.println(amount);
-            System.out.println(salaryStructure+"\n");
-            salaryAssignmentService.save(startDate, empRef, amount, empRef);
+            System.out.println(amount+"\n");
+            salaryAssignmentService.save(startDate, empRef, amount, salaryStructure.getName());
             record += save(startDate, empRef, amount, salaryStructure.getName());
             startDate = startDate.plusMonths(1);
         }
         return record; // returned as insertion record.
+    }
+
+    public int generateWithAssignment(LocalDate startDate, LocalDate endDate, String empRef, Double amount, SalaryStructure salaryStructure, String ecrase)  throws Exception {
+        int record = 0;
+        long monthsBetween = dateService.getMonthBetween(startDate, endDate);
+        System.out.println("Months in between : "+monthsBetween);
+        for (int i = 0; i < monthsBetween; i++) {
+            System.out.println(startDate);
+            System.out.println(empRef);
+            System.out.println(amount+"\n");
+            salaryAssignmentService.save(startDate, empRef, amount, salaryStructure.getName(), ecrase);
+            record += save(startDate, empRef, amount, salaryStructure.getName(), ecrase);
+            startDate = startDate.plusMonths(1);
+        }
+        return record; // returned as insertion record.
+    }
+
+    public int save(LocalDate date, String empRef, double amount, String salaryStructure, String ecrase) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "token "+ApiKeyService.getAPiKey());
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        String url = "http://erpnext.localhost:8000/api/method/hrms.payroll.doctype.salary_slip.salary_slip.create_salary_slip?employee_ref="+empRef+"&salary_structure="+salaryStructure+"&start_date="+date+"&base="+amount+"&ecrase="+ecrase;
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<JsonNode> response = restTemplate.postForEntity(url, entity, JsonNode.class);
+
+        System.out.println(response.getBody());
+        JsonNode dataNode = response.getBody().get("message");
+        int message = objectMapper.treeToValue(dataNode, Integer.class);
+        return message;
     }
 
     public int save(LocalDate date, String empRef, double amount, String salaryStructure) throws Exception {
@@ -153,7 +185,8 @@ public class SalarySlipService {
     }
     
     public List<SalarySlip> findAllByDate(String startDate, String endDate, String emp) throws Exception {
-        String url = "http://erpnext.localhost:8000/api/resource/Salary Slip?fields=[\"*\"]&filters=[[\"posting_date\",\">=\",\"" + startDate + "\"], [\"posting_date\",\"<=\",\"" + endDate + "\"], [\"employee\",\"=\",\"" + emp + "\"]]&limit=500";
+        String url = "http://erpnext.localhost:8000/api/resource/Salary Slip?fields=[\"*\"]&filters=[[\"start_date\",\">=\",\"" + startDate + "\"], [\"start_date\",\"<=\",\"" + endDate + "\"], [\"employee\",\"=\",\"" + emp + "\"]]&limit=500";
+        // String url = "http://erpnext.localhost:8000/api/resource/Salary Slip?fields=[\"*\"]&filters=[[\"posting_date\",\">=\",\"" + startDate + "\"], [\"posting_date\",\"<=\",\"" + endDate + "\"], [\"employee\",\"=\",\"" + emp + "\"]]&limit=500";
         // System.out.println(url);
         
         HttpHeaders headers = new HttpHeaders();
@@ -163,7 +196,7 @@ public class SalarySlipService {
         ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.GET, entity, JsonNode.class);
 
         JsonNode dataNode = response.getBody().get("data");
-        System.out.println(dataNode.toString());
+        System.out.println("Salary Slip :\n"+dataNode.toString());
         SalarySlip[] rfqs = objectMapper.treeToValue(dataNode, SalarySlip[].class);
 
         return Arrays.asList(rfqs);

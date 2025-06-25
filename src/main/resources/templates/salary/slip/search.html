@@ -1,4 +1,4 @@
-<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Salary / Slip </span>/ Update Multiple</h4>
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Salary / Slip </span>/ Search</h4>
 
 <div th:if="${error != null}" class="alert alert-danger alert-dismissible" role="alert">
   <small th:utext="${error}"></small>  
@@ -17,10 +17,10 @@
 
 <div class="card mb-4">
     <div class="mb-4">
-        <h4 class="card-header">Form</h4>
+        <h4 class="card-header">Filter multi-criteria</h4>
     </div>
     <div class="container mb-4">
-        <form th:action="@{/salary/slip/updateMultiple}" method="post">
+        <form th:action="@{/salary/slip/filtreremp}" method="post">
             <div class="row">
                 <div class="col-md-2 mb-4"></div>
                 <div class="col-md-7 mb-4">
@@ -35,7 +35,9 @@
                     <div class="form-floating mb-4">
                         <select name="condition" id="condition" class="form-control">
                             <option value="<"><</option>
+                            <option value="<="><=</option>
                             <option value=">">></option>
+                            <option value=">=">>=</option>
                             <option value="=">=</option>
                         </select>
                         <label for="condition">Condition</label>
@@ -44,32 +46,11 @@
                         <input type="number" class="form-control" id="amount" name="amount" placeholder="Amount for condition">
                         <label for="amount">Condition amount</label>
                     </div>
-                    <div class="form-floating mb-4">
+                    <!-- <div class="form-floating mb-4">
                         <input type="number" class="form-control" id="new_amount" name="new_amount" placeholder="Amount set will be the value  for each salary updated">
                         <label for="new_amount">New salary amount</label>
-                    </div>
-                    <div class="form-floating mb-4">
-                        <select name="choice" id="choice" class="form-control">
-                            <option value="add">add</option>
-                            <option value="reduce">reduce</option>
-                        </select>
-                        <label for="choice">Option</label>
-                    </div>
-                    <div class="form-floating mb-4">
-                        <input type="number" class="form-control" id="value" name="value" placeholder="Value">
-                        <label for="value">Value of the old Salary to add (en %)</label>
-                    </div>
+                    </div>-->
                 </div>
-                <!-- <div class="col-md-6 mb-4">
-                    <div class="form-floating mb-4">
-                        <input type="date" class="form-control" id="start_date" name="start_date">
-                        <label for="start_date">Start date</label>
-                    </div>
-                    <div class="form-floating mb-4">
-                        <input type="date" class="form-control" id="end_date" name="end_date">
-                        <label for="end_date">End Date</label>
-                    </div>
-                </div> -->
                 <div class="col-md-9"></div>
                 <div class="col-md-3">
                     <div class="input-group">
@@ -78,5 +59,46 @@
                 </div>
             </div>
         </form>
+    </div>
+</div>
+
+<div class="card">
+    <h4 class="card-header">Salary Slips filtered</h4>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-striped" th:if = "${slips.size() != 0}">
+            <thead>
+                <tr>
+                    <th>Employee ref</th>
+                    <th>Employee Name</th>
+                    <th>Salary Slip</th>
+                    <th>Date</th>
+                    <!-- <th>Start Date</th>
+                    <th>End Date</th> -->
+                    <th>Net Pay</th>
+                    <th>Total Earnings</th>
+                    <th>Total Deductions</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                <tr th:each="slip: ${slips}">
+                    <td th:text="${slip.employee}"></td>
+                    <td th:text="${slip.employee_name}"></td>
+                    <td th:text="${slip.name}"></td>
+                    <td th:text="${slip.start_date}"></td>
+                    <!-- <td th:text="${slip.start_date}"></td>
+                    <td th:text="${slip.end_date}"></td> -->
+                    <td th:text="${slip.net_pay}"></td>
+                    <td th:text="${slip.gross_pay}"></td>
+                    <td th:text="${slip.total_deduction}"></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                </tr>
+            </tfoot>
+        </table>
+        <div th:unless = "${slips.size() != 0}">
+            <h2 class="card-header">No data found. Use filter if not yet.</h2>
+        </div>
     </div>
 </div>
