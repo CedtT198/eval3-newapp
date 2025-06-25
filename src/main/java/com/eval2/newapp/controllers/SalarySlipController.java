@@ -102,15 +102,15 @@ public class SalarySlipController {
     @RequestParam("emp") String emp, @RequestParam("amount") Double amount, @RequestParam("ecrase") String ecrase, @RequestParam("avg") String avg) throws Exception { 
         System.out.println("ecraser ="+ecrase);
         System.out.println("avg = "+avg);
+        System.out.println("amount ="+amount);
         try {
             List<SalaryAssignment> assignment = salaryAssignmentService.findLastBefore(start_date.toString(), emp);
             System.out.println(assignment.toString());
             SalaryStructure salaryStructure = salaryStructureService.findAll().get(0); 
             System.out.println(salaryStructure.getName());
             if (assignment.size() != 0) {   
-                // tokony tsy miretourne erreur direct fa na tsy mampiditra azy le olona, le moyenne afaka raisina foana
-                if (amount == null || amount <= 0) {
-                    redirectAttributes.addFlashAttribute("error", "Please enter a valid new amount != null and != 0.");
+                if (amount <= 0 && avg.equals("non")) {
+                    redirectAttributes.addFlashAttribute("error", "Please enter a valid new amount or select \"Yes\" to use the average salary amount of the old salaries.");
                 }
                 else {
                     System.out.println("Misy salary assignment");
@@ -122,9 +122,9 @@ public class SalarySlipController {
                             salary = salaryAssignmentService.getAvgBefore(start_date);
                         }
                     }
-                    
-                    int record = salarySlipService.generateWithAssignment(start_date, end_date, emp, salary, salaryStructure, ecrase);
+                    // int record = 0;
                     // int record = salarySlipService.generate(start_date, end_date, emp, assignment.get(0).getBase(), salaryStructure, ecrase);
+                    int record = salarySlipService.generateWithAssignment(start_date, end_date, emp, salary, salaryStructure, ecrase);
                     redirectAttributes.addFlashAttribute("success", record+" salary slip generated succesfuly.");
                 }
             }
